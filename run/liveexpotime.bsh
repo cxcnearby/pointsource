@@ -1,0 +1,6 @@
+#!/bin/bash
+if [ $# -lt 1 ]; then
+    echo "$0  logfile  (use \* to instead of *)"
+else
+    cat $1 $2 $3 $4 | awk 'BEGIN{lt=0;et=0}{lt+=$1;et+=$2}END{print lt,et}'
+fi

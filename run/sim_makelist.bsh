@@ -1,0 +1,81 @@
+#!/bin/bash
+
+simdatafolder=/eos/lhaaso/simulation/wcdamc/g4wcda/full_sky
+
+read -t 30 -n 1 -p "choose version \"b\" or \"c\" to generate filelist: " version
+# ans = "y"    # for auto overwriting! COMMIT PREVIOUS LINE!
+case ${version} in
+b | B)
+    versionfolder=sim_rb
+    gammafolder=4.5m_15m_Rb
+    crfolder=4.5m_15m
+    echo -e "\n"
+    ;;
+c | C)
+    versionfolder=sim_rc
+    gammafolder=4.5m_15m
+    crfolder=4.5m_15m_new2
+    echo -e "\n"
+    ;;
+*)
+    echo -e "\nexit!"
+    exit 0
+    ;;
+esac
+
+goodfolder=${versionfolder}
+
+if [ -d "${goodfolder}" ]; then
+    read -t 30 -n 1 -p "goodfile directory exists, press \"y\" to OVERWRITE or else to exit: " ans
+    # ans = "y"    # for auto overwriting! COMMIT PREVIOUS LINE!
+    case "$ans" in
+    y | Y)
+        echo -e "\noverwrite!"
+        rm -r ${goodfolder}
+        mkdir -r ${goodfolder}
+        ;;
+    *)
+        echo -e "\nexit!"
+        exit 0
+        ;;
+    esac
+else
+    mkdir -p ${goodfolder}
+fi
+
+for type in $(ls ${simdatafolder}); do
+    mkdir -p ${goodfolder}/${type}
+    for energyrange in $(ls ${simdatafolder}/${type}); do
+        case ${type} in
+        Gamma)
+            case ${version} in
+            b | B)
+                surfix="rec2.root"
+                ;;
+            c | C)
+                surfix="rec2.root"
+                ;;
+            *) ;;
+
+            esac
+            indeedfolder=${simdatafolder}/${type}/${energyrange}/recon/${gammafolder}
+            ;;
+        *)
+            case ${version} in
+            b | B)
+                surfix="rec2.root"
+                ;;
+            c | C)
+                surfix="rec-noise3.root"
+                ;;
+            *) ;;
+
+            esac
+            indeedfolder=${simdatafolder}/${type}/${energyrange}/recon/${crfolder}
+            ;;
+        esac
+        eos ls ${indeedfolder} | sort >${goodfolder}/simufile.tmp
+        awk '/DAT/ && /'${surfix}'/ {printf "%s/%s\n", "'${indeedfolder}'", $0}' ${goodfolder}/simufile.tmp >${goodfolder}/${type}/${energyrange}.file
+    done
+done
+rm -f ${goodfolder}/simufile.tmp

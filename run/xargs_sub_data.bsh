@@ -1,0 +1,29 @@
+#!/bin/bash
+StartDate=20191101
+EndDate=20191231
+HepSubBsh=./hep_sub_select.bsh
+InputListDir=/afs/ihep.ac.cn/users/c/changxc/scratchfs/moonshcheck/rebase/run/data_rc
+OutputDir=/afs/ihep.ac.cn/users/c/changxc/scratchfs/output/moonshcheck/rebase/window_rc
+read -t 30 -n 1 -p "It is very dangerous that valuable output data may be overwritten, check it first!  Press \"y\" to CONTINUE or else to exit: " ans
+# ans = "y"    # for auto overwriting! COMMIT PREVIOUS LINE!
+case "$ans" in
+y | Y)
+    echo -e "\noverwrite!"
+    if [ -e ./datelist.tmp ]; then
+        rm -f ./datelist.tmp
+    fi
+    ;;
+*)
+    echo -e "\nexit!"
+    exit 0
+    ;;
+esac
+while [ ${StartDate} -le ${EndDate} ]; do
+    Year=$(date -d "${StartDate}" "+%Y")
+    Date=$(date -d "${StartDate}" "+%m%d")
+    echo "${InputListDir}/${Year}/${Date}.file ${OutputDir}/${Year}/${Date}" >>./datelist.tmp
+    StartDate=$(date -d "+1 day ${StartDate}" "+%Y%m%d")
+done
+cat ./datelist.tmp | xargs -n 2 -P 5 ${HepSubBsh}
+rm -f ./datelist.tmp
+exit 0

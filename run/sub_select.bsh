@@ -1,0 +1,78 @@
+#!/bin/bash
+BshName=ms_select # .bsh file to run
+ExeDir=/afs/ihep.ac.cn/users/c/changxc/scratchfs/moonshcheck/rebase
+JobCapacity=1000
+
+########## par_select ##########
+
+# ExeName=par_select.exe
+# ArgString="100 15"
+# TmpDir=/afs/ihep.ac.cn/users/c/changxc/scratchfs/tmp_sub/moonshcheck/par/$(date "+%Y%m%d")/$(date "+%H%M")
+
+########## par_select ##########
+
+########## window_select ##########
+
+ExeName=window_select.exe
+ArgString="3 3 45 -p 83.63 22.01"
+TmpDir=/afs/ihep.ac.cn/users/c/changxc/scratchfs/tmp_sub/moonshcheck/window/$(date "+%Y%m%d")/$(date "+%H%M")
+
+########## window_select ##########
+
+########## transform_sim ##########
+
+# ExeName=sim_par_select.exe
+# ArgString="0 0"
+# # ArgString="100 15"
+# TmpDir=/afs/ihep.ac.cn/users/c/changxc/scratchfs/tmp_sub/moonshcheck/sim/$(date "+%Y%m%d")/$(date "+%H%M")
+
+########## sim_par_select ##########
+
+if [ $# -lt 2 ]; then
+    echo "Parameters: InputFileList OutputDir"
+else
+    InputFileList=$1 # input directory
+    OutputDir=$2     # output directory
+    TmpDir=${TmpDir}/$(basename ${InputFileList} .file)
+    mkdir -p ${TmpDir} # create a temp folder to save job .bsh files
+    mkdir -p ${OutputDir}
+    ListedFileNum=$(cat ${InputFileList} | wc -l)
+    EosDir=$(dirname $(sed -n '1p' ${InputFileList}))
+    eos ls ${EosDir} >${OutputDir}/eosreclist.log
+
+    echo -e "[InputFileList]\n${InputFileList}\n[ListedFileNum]\n${ListedFileNum}\n[OutputDir]\n${OutputDir}\n[TmpDir]\n${TmpDir}\n[ExeDir]\n${ExeDir}\n[ExeName]\n${ExeName}\n[ArgString]\n${ArgString}\n[BshName]\n${BshName}" >${OutputDir}/jobinfo.txt
+
+    #############################################################
+    # below, run over the list to create jobs
+    #############################################################
+
+    SubName=${BshName}_$(basename ${InputFileList} .file) # submission name
+
+    JobPointer=0
+    SubId=0
+    while [ ${JobPointer} -lt ${ListedFileNum} ]; do
+        JobId=$(expr ${JobPointer} + 1)
+        cp -rf ${BshName}.bsh ${TmpDir}/${SubName}_${SubId}.bsh # make a temp copy of the .bsh file
+        chmod 755 ${TmpDir}/${SubName}_${SubId}.bsh             # change file permission to allow execute
+
+        sed -i -e 's#ConfigExeDir#'${ExeDir}'#g' \
+            -e 's#ConfigExeName#'${ExeName}'#g' \
+            -e 's#ConfigArgString#'"${ArgString}"'#g' \
+            -e 's#ConfigInputFileList#'${InputFileList}'#g' \
+            -e 's#ConfigOutputDir#'${OutputDir}'#g' \
+            -e 's#ConfigStartFile#'${JobId}'#g' \
+            -e 's#ConfigJobCapacity#'${JobCapacity}'#g' \
+            ${TmpDir}/${SubName}_${SubId}.bsh # use # instead of / to prevent the "/" ambiguity in directory
+
+        echo ${JobId} initiated
+        JobPointer=$(expr ${JobPointer} + ${JobCapacity})
+        SubId=$(expr ${SubId} + 1)
+    done
+    if [ ${SubId} -le 1 ]; then
+        hep_sub -g lhaaso -prio 1 ${TmpDir}/${SubName}_0.bsh
+    else
+        hep_sub -g lhaaso -prio 1 ${TmpDir}/${SubName}_"%{ProcId}".bsh -n ${SubId} # submit job!!!
+    fi
+    echo "${ListedFileNum} in $(basename ${InputFileList}) all submitted in ${SubId} jobs" # to show off~
+fi
+exit 0

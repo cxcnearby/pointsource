@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "*.icc": "cpp",
+        "*.conf": "cpp",
+        "*.bsh": "shellscript",
+        "string": "cpp"
+    }
+}

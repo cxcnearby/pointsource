@@ -1,0 +1,58 @@
+#!/bin/bash
+
+runlog=mode.txt
+StartDate=20190301
+EndDate=20200331
+
+read -t 30 -n 1 -p "choose version \"b\" or \"c\" to generate filelist: " version
+# ans = "y"    # for auto overwriting! COMMIT PREVIOUS LINE!
+case ${version} in
+b | B)
+    versionfolder=data_rb
+    crfolder=Rb
+    echo -e "\n"
+    ;;
+c | C)
+    versionfolder=data_rc
+    crfolder=Rc
+    echo -e "\n"
+    ;;
+*)
+    echo -e "\nexit!"
+    exit 0
+    ;;
+esac
+
+goodfolder=${versionfolder}
+
+if [ -d "${goodfolder}" ]; then
+    read -t 30 -n 1 -p "goodfile directory exists, press \"y\" to OVERWRITE or else to exit: " ans
+    # ans = "y"    # for auto overwriting! COMMIT PREVIOUS LINE!
+    case "$ans" in
+    y | Y)
+        echo -e "\noverwrite!"
+        rm -r ${goodfolder}
+        mkdir -p ${goodfolder}/2019
+        mkdir -p ${goodfolder}/2020
+        ;;
+    *)
+        echo -e "\nexit!"
+        exit 0
+        ;;
+    esac
+else
+    mkdir -p ${goodfolder}/2019
+    mkdir -p ${goodfolder}/2020
+fi
+
+awk 'BEGIN {IGNORECASE=1} $2 !~ /LED/ && $4 ~ /GOOD/ && $5 ~ /WCDA_EVENT/ {print $5}' ${runlog} >mode_good_${crfolder}.tmp
+awk 'BEGIN {IGNORECASE=1} $4 !~ /GOOD/ || /TEST/ {print $5}' ${runlog} >mode_bad_${crfolder}.tmp
+awk 'NR==FNR {file[$0]} NR>FNR {if (!($0 in file)) print $0}' mode_bad_${crfolder}.tmp mode_good_${crfolder}.tmp >mode_${crfolder}.tmp
+
+while [ ${StartDate} -le ${EndDate} ]; do
+    Year=$(date -d "${StartDate}" "+%Y")
+    Date=$(date -d "${StartDate}" "+%m%d")
+    awk '/\.'${Year}${Date}'[0-9]/ {sub(".dat", "_rec.root"); printf "/eos/lhaaso/rec/wcda/%s/%s/%s/%s\n", "'${crfolder}'", "'${Year}'", "'${Date}'", $0}' mode_${crfolder}.tmp >${goodfolder}/${Year}/${Date}.file
+    StartDate=$(date -d "+1 day ${StartDate}" "+%Y%m%d")
+done
+rm -f mode_bad_${crfolder}.tmp mode_good_${crfolder}.tmp mode_${crfolder}.tmp

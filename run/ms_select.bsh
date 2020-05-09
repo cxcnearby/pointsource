@@ -1,0 +1,22 @@
+#!/bin/bash
+
+ExeDir=ConfigExeDir
+ExeName=ConfigExeName
+InputFileList=ConfigInputFileList
+OutputDir=ConfigOutputDir
+ArgString="ConfigArgString"
+
+cd ${ExeDir}
+
+source /cvmfs/lhaaso.ihep.ac.cn/anysw/slc6_ia64_gcc73/external/env.sh
+
+Id=ConfigStartFile
+Fd=$(expr $Id + ConfigJobCapacity)
+
+awk -v first=${Id} -v last=${Fd} 'NR >= first && NR < last {print}' ${InputFileList} >${OutputDir}/list_${Id}.tmp
+awk -F / 'NR==FNR {eoslist[$0]} NR>FNR {if ($NF in eoslist) print}' ${OutputDir}/eosreclist.log ${OutputDir}/list_${Id}.tmp >${OutputDir}/list_${Id}.file
+rm ${OutputDir}/list_${Id}.tmp
+
+./${ExeName} ${OutputDir}/list_${Id}.file ${OutputDir}/list_${Id}.root ${ArgString}
+
+exit 0
