@@ -1,41 +1,29 @@
-CC		:= g++
-CFLAGS	:= -std=c++17 -Wall -Wextra -g
+CXX			:= g++
+CXXFLAGS	:= -Wall -g -O2 `root-config --cflags --libs ` -lMinuit
 
 BIN		:= bin
 SRC		:= src
-INCLUDE	:= include
+INC		:= include
 LIB		:= lib
 
-LIBRARIES	:=
+LIBRARIES	:= -L ~/lib -lsofa_c
+INCLUDES	:= -I ~/include
 
-ifeq ($(OS),Windows_NT)
-EXECUTABLE	:= main.exe
-SOURCEDIRS	:= $(SRC)
-INCLUDEDIRS	:= $(INCLUDE)
-LIBDIRS		:= $(LIB)
-else
-EXECUTABLE	:= main
 SOURCEDIRS	:= $(shell find $(SRC) -type d)
-INCLUDEDIRS	:= $(shell find $(INCLUDE) -type d)
-LIBDIRS		:= $(shell find $(LIB) -type d)
-endif
-
-CINCLUDES	:= $(patsubst %,-I%, $(INCLUDEDIRS:%/=%))
-CLIBS		:= $(patsubst %,-L%, $(LIBDIRS:%/=%))
 
 SOURCES		:= $(wildcard $(patsubst %,%/*.cpp, $(SOURCEDIRS)))
-OBJECTS		:= $(SOURCES:.cpp=.o)
+EXECUTABLE	:= $(SOURCES:.cpp=.exe)
+EXECUTABLE	:= $(EXECUTABLE:.exe=.exe1)
+EXECUTABLE	:= $(subst $(BIN)%,$(SRC)%,$(EXECUTABLE))
 
-all: $(BIN)/$(EXECUTABLE)
+all: $(EXECUTABLE)
 
 .PHONY: clean
 clean:
-	-$(RM) $(BIN)/$(EXECUTABLE)
-	-$(RM) $(OBJECTS)
-
+	-$(RM) $(EXECUTABLE)
 
 run: all
-	./$(BIN)/$(EXECUTABLE)
+	./$(EXECUTABLE)
 
-$(BIN)/$(EXECUTABLE): $(OBJECTS)
-	$(CC) $(CFLAGS) $(CINCLUDES) $(CLIBS) $^ -o $@ $(LIBRARIES)
+$(EXECUTABLE): $(BIN)/%.exe: $(SRC)/%.cpp $(SRC)/$(dir %)/*.cc
+	$(CXX) $^ -o $@ $(CXXFLAGS) -I$(INC) -I$(INC)/$(dir %) $(CLIBS) $(INCLUDES) $(LIBRARIES)
