@@ -1,11 +1,12 @@
 #include "Astro.h"
+#include "constant.h"
+
 #include "TBranch.h"
 #include "TChain.h"
 #include "TF1.h"
 #include "TFile.h"
 #include "TROOT.h"
 #include "TTree.h"
-#include "constant.h"
 #include <TH1.h>
 #include <TH2.h>
 #include <math.h>

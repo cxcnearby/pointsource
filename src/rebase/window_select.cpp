@@ -3,6 +3,11 @@
  *  @date    2019.06.01
 /* ========================================================= */
 #include "Astro.h"
+#include "constant.h"
+#include "rebase/CopyTreeStruct.h"
+
+#include "sofa.h"
+
 #include "TBranch.h"
 #include "TChain.h"
 #include "TF1.h"
@@ -10,9 +15,6 @@
 #include "TH1.h"
 #include "TROOT.h"
 #include "TTree.h"
-#include "constant.h"
-#include "rebase/CopyTreeStruct.h"
-#include "sofa.h"
 #include <fstream>
 #include <iostream>
 #include <math.h>

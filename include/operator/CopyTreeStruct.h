@@ -18,7 +18,7 @@ public:
   int SetWriteTree(TTree *&tree);
   TString GetTreeName();
   bool IsExists(const TString leaf_name);
-  const double operator[](const TString leaf_name) const;
+  double operator[](const TString leaf_name) const;
 
 private:
   struct LeafInfo {

@@ -1,7 +1,8 @@
 #include "functions.h"
+#include "constant.h"
+
 #include "TFile.h"
 #include "TH1.h"
-#include "constant.h"
 #include <iostream>
 #include <math.h>
 
