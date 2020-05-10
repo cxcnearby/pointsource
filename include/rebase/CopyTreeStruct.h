@@ -42,12 +42,4 @@ private:
   int setwritetree_status_ = -1;
 };
 
-CopyTreeStruct::CopyTreeStruct() {}
-CopyTreeStruct::CopyTreeStruct(const char *root_file_name)
-    : template_name_(root_file_name) {}
-CopyTreeStruct::CopyTreeStruct(const char *root_file_name,
-                               const TString tree_name)
-    : template_name_(root_file_name), treename_(tree_name) {}
-CopyTreeStruct::~CopyTreeStruct() {}
-
 #endif // COPYTREESTRUCT_H_

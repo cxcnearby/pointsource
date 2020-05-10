@@ -1,6 +1,14 @@
 #include "rebase/CopyTreeStruct.h"
 #include <iostream>
 
+CopyTreeStruct::CopyTreeStruct() {}
+CopyTreeStruct::CopyTreeStruct(const char *root_file_name)
+    : template_name_(root_file_name) {}
+CopyTreeStruct::CopyTreeStruct(const char *root_file_name,
+                               const TString tree_name)
+    : template_name_(root_file_name), treename_(tree_name) {}
+CopyTreeStruct::~CopyTreeStruct() {}
+
 int CopyTreeStruct::Init() {
   TFile *file = TFile::Open(template_name_, "READ");
   if (!file) {

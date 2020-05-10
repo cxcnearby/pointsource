@@ -1,6 +1,3 @@
-CXX			:= g++
-CXXFLAGS	:= -Wall -g -O2 `root-config --cflags --libs ` -lMinuit
-
 BIN		:= bin
 SRC		:= src
 INC		:= include
@@ -13,8 +10,10 @@ SOURCEDIRS	:= $(shell find $(SRC) -type d)
 
 SOURCES		:= $(wildcard $(patsubst %,%/*.cpp, $(SOURCEDIRS)))
 EXECUTABLE	:= $(SOURCES:.cpp=.exe)
-EXECUTABLE	:= $(EXECUTABLE:.exe=.exe1)
-EXECUTABLE	:= $(subst $(BIN)%,$(SRC)%,$(EXECUTABLE))
+EXECUTABLE	:= $(subst $(SRC), $(BIN), $(EXECUTABLE))
+
+CXX			:= g++
+CXXFLAGS	:= -Wall -g -O2 `root-config --cflags --libs ` -lMinuit -I$(INC) $(CLIBS) $(INCLUDES) $(LIBRARIES)
 
 all: $(EXECUTABLE)
 
@@ -25,5 +24,5 @@ clean:
 run: all
 	./$(EXECUTABLE)
 
-$(EXECUTABLE): $(BIN)/%.exe: $(SRC)/%.cpp $(SRC)/$(dir %)/*.cc
-	$(CXX) $^ -o $@ $(CXXFLAGS) -I$(INC) -I$(INC)/$(dir %) $(CLIBS) $(INCLUDES) $(LIBRARIES)
+$(EXECUTABLE): $(BIN)/%.exe: $(SRC)/%.cpp
+	-$(CXX) $^  $(SRC)/$(*D)/*.cc -o $@ $(CXXFLAGS)
