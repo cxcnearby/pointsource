@@ -1,6 +1,6 @@
 #!/bin/bash
 BshName=ms_select # .bsh file to run
-ExeDir=/afs/ihep.ac.cn/users/c/changxc/scratchfs/moonshcheck/rebase
+ExeDir=/afs/ihep.ac.cn/users/c/changxc/scratchfs/pointsource
 JobCapacity=1000
 
 ########## par_select ##########

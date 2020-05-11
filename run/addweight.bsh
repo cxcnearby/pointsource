@@ -1,6 +1,6 @@
 #!/bin/bash
-InputDir=~/scratchfs/output/moonshcheck/rebase/sim_rb_all00
-ExeDir=~/scratchfs/moonshcheck/rebase
+InputDir=~/scratchfs/output/pointsource/sim_rb_all00
+ExeDir=~/scratchfs/pointsource
 cd ${ExeDir}
 for type in $(ls -d ${InputDir}/*/); do
     type=$(basename ${type})

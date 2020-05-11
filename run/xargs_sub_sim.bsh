@@ -1,7 +1,7 @@
 #!/bin/bash
 HepSubBsh=./hep_sub_select.bsh
-InputListDir=/afs/ihep.ac.cn/users/c/changxc/scratchfs/moonshcheck/rebase/run/sim_rc/Iron
-OutputDir=/afs/ihep.ac.cn/users/c/changxc/scratchfs/output/moonshcheck/rebase/sim_rc_all00/Iron
+InputListDir=/afs/ihep.ac.cn/users/c/changxc/scratchfs/pointsource/run/sim_rc/Iron
+OutputDir=/afs/ihep.ac.cn/users/c/changxc/scratchfs/output/pointsource/sim_rc_all00/Iron
 read -t 30 -n 1 -p "It is very dangerous that valuable output data may be overwritten, check it first!  Press \"y\" to CONTINUE or else to exit: " ans
 # ans = "y"    # for auto overwriting! COMMIT PREVIOUS LINE!
 case "$ans" in
