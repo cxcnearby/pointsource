@@ -1,4 +1,5 @@
 #include "constant.h"
+#include "functions.h"
 
 #include "TBranch.h"
 #include "TCanvas.h"
@@ -10,7 +11,6 @@
 #include "TROOT.h"
 #include "TRandom.h"
 #include "TTree.h"
-#include "functions.h"
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
@@ -90,9 +90,9 @@ int main(int argc, char *argv[]) {
     } else {
       erange = floor(log10(e0 / 1000.));
       int i_e0 = erange + 2;
-      int i_zen = int(zenmc / zen_bin_width);
-      weight = bin_flux[i_e0] * strip[i_zen] * 86400. * area *
-               cos((i_zen + 0.5) * zen_bin_width * D2R) /
+      int i_zen = int(zenmc / kZenBinWidth);
+      weight = bin_flux[i_e0] * strip[i_zen] * 86400. * kArea *
+               cos((i_zen + 0.5) * kZenBinWidth * D2R) /
                (sum_ntot * strip[i_zen] / totalarea);
     }
     trec->Fill();

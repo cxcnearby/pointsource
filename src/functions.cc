@@ -106,9 +106,11 @@ double integrated_flux(const int type, const double E1, const double E2) {
 
 std::vector<double> striparea() {
   std::vector<double> strip;
-  for (int i = 0; i < n_zen_bin; ++i) {
-    double area = 2. * PI * (cos(i * zen_bin_width * D2R) - cos((i + 1) * zen_bin_width * D2R));
-    strip.emplace_back(area);
+  for (int i = 0; i < kNZenBin; ++i) {
+    double tmp_area =
+        2. * PI *
+        (cos(i * kZenBinWidth * D2R) - cos((i + 1) * kZenBinWidth * D2R));
+    strip.emplace_back(tmp_area);
   }
   return strip;
 }
@@ -135,4 +137,10 @@ std::vector<double> point_duration_of_zenith_bin() {
   }
   fcrab->Close();
   return duration;
+}
+
+std::vector<double> inwindow_duration_of_zenith_bin() {
+  TFile *fcrab = TFile::Open("crab_zen_dist.root", "read");
+  TH1F *hzen = (TH1F *)fcrab->Get("hzen");
+  const int kNzen = hzen->GetNbinsX();
 }

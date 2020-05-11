@@ -45,8 +45,8 @@ int main(int argc, char *argv[]) {
   clock_t ctStart, ctFinish;
   ctStart = clock();
 
-  int n_zen = int(180. / zen_bin_width);
-  int n_azi = int(360. / zen_bin_width);
+  int n_zen = int(180. / kZenBinWidth);
+  int n_azi = int(360. / kZenBinWidth);
   TFile *f = new TFile("crab_zen_dist.root", "recreate");
   TH1F *hzen = new TH1F("hzen", "zen dist", n_zen, 0, 180);
   TH1F *hazi = new TH1F("hazi", "azi dist", n_azi, -180, 180);
