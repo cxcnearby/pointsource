@@ -25,7 +25,7 @@ clean:
 run: all
 	./$(EXECUTABLE)
 
-bin/addweight.exe: src/addweight.cpp src/*.cc
+bin/addweight_window.exe: src/addweight_window.cpp src/*.cc
 	-$(CXX) $^ -o $@ $(CXXFLAGS)
 bin/addweight_allsky.exe: src/addweight_allsky.cpp src/*.cc
 	-$(CXX) $^ -o $@ $(CXXFLAGS)

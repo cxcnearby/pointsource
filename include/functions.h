@@ -5,9 +5,8 @@
 
 double flux(const double E, const int type);
 double integrated_flux(const double E1, const double E2);
-double striparea(const double zenc);
+std::vector<double> striparea();
 std::vector<double> binned_integrated_flux(const int type);
-std::vector<double> duration_of_zenith_bin();
-std::vector<double> stripratio(const int type);
+std::vector<double> point_duration_of_zenith_bin();
 
 #endif

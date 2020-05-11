@@ -104,10 +104,13 @@ double integrated_flux(const int type, const double E1, const double E2) {
   return N;
 }
 
-double striparea(const double zenith) {
-  int i = int(zenith / zen_bin_width);
-  return 2. * PI *
-         (cos(i * zen_bin_width * D2R) - cos((i + 1) * zen_bin_width * D2R));
+std::vector<double> striparea() {
+  std::vector<double> strip;
+  for (int i = 0; i < n_zen_bin; ++i) {
+    double area = 2. * PI * (cos(i * zen_bin_width * D2R) - cos((i + 1) * zen_bin_width * D2R));
+    strip.emplace_back(area);
+  }
+  return strip;
 }
 
 std::vector<double> binned_integrated_flux(const int type) {
@@ -122,7 +125,7 @@ std::vector<double> binned_integrated_flux(const int type) {
   return binned_integrated_flux;
 }
 
-std::vector<double> duration_of_zenith_bin() {
+std::vector<double> point_duration_of_zenith_bin() {
   TFile *fcrab = TFile::Open("crab_zen_dist.root", "read");
   TH1F *hzen = (TH1F *)fcrab->Get("hzen");
   const int kNzen = hzen->GetNbinsX();
@@ -132,19 +135,4 @@ std::vector<double> duration_of_zenith_bin() {
   }
   fcrab->Close();
   return duration;
-}
-
-std::vector<double> stripratio(const int type) {
-  std::vector<double> strip;
-  for (int i = 0; i < n_zen_bin; ++i) {
-    double totalarea = 2. * PI * (1. - cos(60. * D2R));
-    double tmp_stripratio;
-    if (type != 0) {
-      tmp_stripratio = 1. / totalarea; // 1/(A_tot*cos(theta)) for CR
-    } else {
-      tmp_stripratio = striparea((i + 0.5) * zen_bin_width) / totalarea;
-    } // A_strip/(A_tot*cos(theta)) for Crab;
-    strip.emplace_back(tmp_stripratio);
-  }
-  return strip;
 }

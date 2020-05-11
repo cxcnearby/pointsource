@@ -79,18 +79,22 @@ int main(int argc, char *argv[]) {
     sum_nsel += nsel;
   }
   delete cInput2;
-  vector<double> strip = stripratio(type);
+  vector<double> strip = striparea();
   vector<double> bin_flux = binned_integrated_flux(type);
-  vector<double> time_zen = duration_of_zenith_bin();
   nentries = cInput1->GetEntries();
+  double totalarea = 2. * PI * (1. - cos(60. * D2R));
   for (int ientry = 0; ientry < nentries; ++ientry) {
     cInput1->GetEntry(ientry);
-    erange = floor(log10(e0 / 1000.));
-    int i_e0 = erange + 2;
-    int i_zen = int(zenmc / zen_bin_width);
-    weight = bin_flux[i_e0] * 86400. * area *
-             cos((i_zen + 0.5) * zen_bin_width * D2R) /
-             (sum_ntot * strip[i_zen]);
+    if (type == 0) {
+      weight = 0.;
+    } else {
+      erange = floor(log10(e0 / 1000.));
+      int i_e0 = erange + 2;
+      int i_zen = int(zenmc / zen_bin_width);
+      weight = bin_flux[i_e0] * strip[i_zen] * 86400. * area *
+               cos((i_zen + 0.5) * zen_bin_width * D2R) /
+               (sum_ntot * strip[i_zen] / totalarea);
+    }
     trec->Fill();
   }
   delete cInput1;
