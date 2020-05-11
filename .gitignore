@@ -36,3 +36,4 @@ test*
 *.root
 *.error
 *.log
+*.file
