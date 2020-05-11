@@ -1,3 +1,5 @@
+#include "constant.h"
+
 #include "TBranch.h"
 #include "TCanvas.h"
 #include "TChain.h"
@@ -17,10 +19,6 @@
 #include <string>
 
 using namespace std;
-
-const double zen_bin_width = 0.5;
-const int n_zen_bin = 60. / zen_bin_width;
-double area = 2000. * 2000.;
 
 double corsika_event_number_rb[] = {1.e-6, 1.e8, 1.e8, 2.e6, 4.e5};
 double corsika_event_number_rc[] = {1.e-6, 9.914e7, 9.9963e7, 1.9998e6,
@@ -81,7 +79,7 @@ int main(int argc, char *argv[]) {
     sum_nsel += nsel;
   }
   delete cInput2;
-  vector<double> strip = stripratio(type, zen_bin_width, n_zen_bin);
+  vector<double> strip = stripratio(type);
   vector<double> bin_flux = binned_integrated_flux(type);
   vector<double> time_zen = duration_of_zenith_bin();
   nentries = cInput1->GetEntries();
@@ -90,7 +88,9 @@ int main(int argc, char *argv[]) {
     erange = floor(log10(e0 / 1000.));
     int i_e0 = erange + 2;
     int i_zen = int(zenmc / zen_bin_width);
-    weight = bin_flux[i_e0] * 86400. * area / (sum_ntot * strip[i_zen]);
+    weight = bin_flux[i_e0] * 86400. * area *
+             cos((i_zen + 0.5) * zen_bin_width * D2R) /
+             (sum_ntot * strip[i_zen]);
     trec->Fill();
   }
   delete cInput1;

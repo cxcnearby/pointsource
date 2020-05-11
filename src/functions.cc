@@ -104,6 +104,12 @@ double integrated_flux(const int type, const double E1, const double E2) {
   return N;
 }
 
+double striparea(const double zenith) {
+  int i = int(zenith / zen_bin_width);
+  return 2. * PI *
+         (cos(i * zen_bin_width * D2R) - cos((i + 1) * zen_bin_width * D2R));
+}
+
 std::vector<double> binned_integrated_flux(const int type) {
   // unequal-bin-width compound Simpson method.
   std::vector<double> binned_integrated_flux;
@@ -128,22 +134,15 @@ std::vector<double> duration_of_zenith_bin() {
   return duration;
 }
 
-std::vector<double> stripratio(const int type, const double zen_bin_width,
-                               const int n_zen_bin) {
+std::vector<double> stripratio(const int type) {
   std::vector<double> strip;
   for (int i = 0; i < n_zen_bin; ++i) {
     double totalarea = 2. * PI * (1. - cos(60. * D2R));
     double tmp_stripratio;
     if (type != 0) {
-      tmp_stripratio =
-          1. / (totalarea * cos((i + 0.5) * zen_bin_width *
-                                D2R)); // 1/(A_tot*cos(theta)) for CR
+      tmp_stripratio = 1. / totalarea; // 1/(A_tot*cos(theta)) for CR
     } else {
-      double striparea =
-          2. * PI *
-          (cos(i * zen_bin_width * D2R) - cos((i + 1) * zen_bin_width * D2R));
-      tmp_stripratio =
-          striparea / (totalarea * cos((i + 0.5) * zen_bin_width * D2R));
+      tmp_stripratio = striparea((i + 0.5) * zen_bin_width) / totalarea;
     } // A_strip/(A_tot*cos(theta)) for Crab;
     strip.emplace_back(tmp_stripratio);
   }

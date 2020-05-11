@@ -11,4 +11,8 @@
 #define observer_la 29.357656306  /*  latitude  */
 #define observer_lo 100.138794639 /* longtitude */
 
+const double zen_bin_width = 0.5;
+const int n_zen_bin = 60. / zen_bin_width;
+double area = 2000. * 2000.;
+
 #endif
