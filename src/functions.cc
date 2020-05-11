@@ -139,8 +139,33 @@ std::vector<double> point_duration_of_zenith_bin() {
   return duration;
 }
 
-std::vector<double> inwindow_duration_of_zenith_bin() {
+std::vector<double>
+inwindow_duration_of_zenith_bin(const double window_radius,
+                                const double direction_error) {
+  const double a = (window_radius + direction_error) * D2R;
+  std::vector<double> duration;
   TFile *fcrab = TFile::Open("crab_zen_dist.root", "read");
   TH1F *hzen = (TH1F *)fcrab->Get("hzen");
   const int kNzen = hzen->GetNbinsX();
-}
+  for (int i = 0; i < kNzen; ++i) {
+    double eff_time = 0.;
+    const double b = (i + 0.5) * kZenBinWidth * D2R;
+    for (int j = 0; j < kNzen; ++j) {
+      const double c = (j + 0.5) * kZenBinWidth * D2R;
+      double A;
+      if (fabs(c - b) > a) // two circles have no overlap.
+        continue;
+      if (c + b < a) { // window circle contains strip circle.
+        A = PI;
+      } else { // two circles have some overlap.
+        A = acos((cos(a) - cos(b) * cos(c)) / (sin(b) * sin(c)));
+      }
+      double segment_ratio = A / PI;
+      double time_of_crab_inbin = hzen->GetBinContent(j);
+      eff_time += segment_ratio * time_of_crab_inbin;
+    }
+    duration.emplace_back(eff_time);
+  }
+  fcrab->Close();
+  return duration;
+} // cosa = cosb cosc + sinb sinc cosA, derive A!

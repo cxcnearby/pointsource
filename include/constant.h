@@ -2,17 +2,17 @@
 #define POINTSOURCE_INCLUDE_CONSTANT_H
 /********** Constant **********/
 
-#define D2R 0.017453292519943296  /*   pi/180  */
-#define R2D 57.295779513082322    /*   180/pi  */
-#define PI 3.14159265358979323846 /* pi */
+extern const double D2R; /*   pi/180  */
+extern const double R2D; /*   180/pi  */
+extern const double PI;  /* pi */
 
 /********** Location of Tibet **********/
 
-#define observer_la 29.357656306  /*  latitude  */
-#define observer_lo 100.138794639 /* longtitude */
+extern const double observer_la; /*  latitude  */
+extern const double observer_lo; /* longtitude */
 
-const double kZenBinWidth = 0.5;
-const int kNZenBin = 60. / kZenBinWidth;
-double kArea = 2000. * 2000.;
+extern const double kZenBinWidth;
+extern const int kNZenBin;
+extern const double kArea;
 
 #endif

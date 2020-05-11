@@ -1,3 +1,6 @@
+#include "constant.h"
+#include "functions.h"
+
 #include "TBranch.h"
 #include "TCanvas.h"
 #include "TChain.h"
@@ -8,7 +11,6 @@
 #include "TROOT.h"
 #include "TRandom.h"
 #include "TTree.h"
-#include "functions.h"
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
@@ -18,21 +20,21 @@
 
 using namespace std;
 
-const double zen_bin_width = 0.5;
-const int n_zen_bin = 60. / zen_bin_width;
-double area = 2000. * 2000.;
-
 double corsika_event_number_rb[] = {1.e-6, 1.e8, 1.e8, 2.e6, 4.e5};
 double corsika_event_number_rc[] = {1.e-6, 9.914e7, 9.9963e7, 1.9998e6,
                                     3.9988e5};
 
 int main(int argc, char *argv[]) {
-  if (argc < 3) {
-    cout << argv[0] << "  input.root  particle_type" << endl;
+  if (argc < 5) {
+    cout << argv[0]
+         << "  input.root  particle_type  window_radius  direction_error"
+         << endl;
     exit(1);
   }
   string input = argv[1];
   int type = atoi(argv[2]);
+  const double window_radius = atof(argv[3]);
+  const double direction_error = atof(argv[4]);
   string outroot = input.substr(0, input.length() - 5) + "wt.root";
 
   clock_t ctStart, ctFinish;
@@ -81,17 +83,27 @@ int main(int argc, char *argv[]) {
     sum_nsel += nsel;
   }
   delete cInput2;
-  vector<double> strip = stripratio(type, zen_bin_width, n_zen_bin);
+  vector<double> strip = striparea();
   vector<double> bin_flux = binned_integrated_flux(type);
-  vector<double> time_zen = duration_of_zenith_bin();
+  vector<double> point_time_zen = point_duration_of_zenith_bin();
+  vector<double> inwindow_time_zen =
+      inwindow_duration_of_zenith_bin(window_radius, direction_error);
+  double totalarea = 2. * PI * (1. - cos(60. * D2R));
   nentries = cInput1->GetEntries();
   for (int ientry = 0; ientry < nentries; ++ientry) {
     cInput1->GetEntry(ientry);
     erange = floor(log10(e0 / 1000.));
     int i_e0 = erange + 2;
-    int i_zen = int(zenmc / zen_bin_width);
-    weight =
-        bin_flux[i_e0] * time_zen[i_zen] * area / (sum_ntot * strip[i_zen]);
+    int i_zen = int(zenmc / kZenBinWidth);
+    if (type == 0) {
+      weight = bin_flux[i_e0] * point_time_zen[i_zen] * kArea *
+               cos((i_zen + 0.5) * kZenBinWidth * D2R) /
+               (sum_ntot * strip[i_zen] / totalarea);
+    } else {
+      weight = bin_flux[i_e0] * strip[i_zen] * inwindow_time_zen[i_zen] *
+               kArea * cos((i_zen + 0.5) * kZenBinWidth * D2R) /
+               (sum_ntot * strip[i_zen] / totalarea);
+    }
     trec->Fill();
   }
   delete cInput1;
