@@ -82,6 +82,8 @@ int main(int argc, char *argv[]) {
     dAZI = azirange(dAZI * R2D);
     // dAZI = dAZI * R2D;
     dZENITH = dZENITH * R2D;
+    if (dZENITH > 45.)
+      continue;
     hzen->Fill(dZENITH, 0.1);
     hazi->Fill(dAZI, 0.1);
   }
