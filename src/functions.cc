@@ -20,10 +20,10 @@ double flux(const double E, const int type) {
   }
   case 14: {
     // Gaisser model
-    double par[4][3] = {{7860., 1.66, 4.e3},
-                        {20., 1.4, 3.e4},
-                        {1.7, 1.4, 2.e6},
-                        {200., 1.6, 6.e7}};
+    double par[4][3] = { { 7860., 1.66, 4.e3 },
+                         { 20., 1.4, 3.e4 },
+                         { 1.7, 1.4, 2.e6 },
+                         { 200., 1.6, 6.e7 } };
     double z = 1.;
     for (int i = 0; i < 3; ++i) {
       flux += 1.e3 * par[i][0] * pow(1000. * E, -1. - par[i][1]) *
@@ -32,10 +32,10 @@ double flux(const double E, const int type) {
     break;
   }
   case 402: {
-    double par[4][3] = {{3550., 1.58, 4.e3},
-                        {20., 1.4, 3.e4},
-                        {1.7, 1.4, 2.e6},
-                        {0., 0., 6.e7}};
+    double par[4][3] = { { 3550., 1.58, 4.e3 },
+                         { 20., 1.4, 3.e4 },
+                         { 1.7, 1.4, 2.e6 },
+                         { 0., 0., 6.e7 } };
     double z = 2.;
     for (int i = 0; i < 3; ++i) {
       flux += 1.e3 * par[i][0] * pow(1000. * E, -1. - par[i][1]) *
@@ -44,10 +44,10 @@ double flux(const double E, const int type) {
     break;
   }
   case 1407: {
-    double par[4][3] = {{2200., 1.63, 4.e3},
-                        {13.4, 1.4, 3.e4},
-                        {1.14, 1.4, 2.e6},
-                        {0., 0., 6.e7}};
+    double par[4][3] = { { 2200., 1.63, 4.e3 },
+                         { 13.4, 1.4, 3.e4 },
+                         { 1.14, 1.4, 2.e6 },
+                         { 0., 0., 6.e7 } };
     double z = 7.;
     for (int i = 0; i < 3; ++i) {
       flux += 1.e3 * par[i][0] * pow(1000. * E, -1. - par[i][1]) *
@@ -58,10 +58,10 @@ double flux(const double E, const int type) {
     break;
   }
   case 2513: {
-    double par[4][3] = {{1430., 1.67, 4.e3},
-                        {13.4, 1.4, 3.e4},
-                        {1.14, 1.4, 2.e6},
-                        {0., 0., 6.e7}};
+    double par[4][3] = { { 1430., 1.67, 4.e3 },
+                         { 13.4, 1.4, 3.e4 },
+                         { 1.14, 1.4, 2.e6 },
+                         { 0., 0., 6.e7 } };
     double z = 13.;
     for (int i = 0; i < 3; ++i) {
       flux += 1.e3 * par[i][0] * pow(1000. * E, -1. - par[i][1]) *
@@ -70,10 +70,10 @@ double flux(const double E, const int type) {
     break;
   }
   case 5626: {
-    double par[4][3] = {{2120., 1.63, 4.e3},
-                        {13.4, 1.4, 3.e4},
-                        {1.14, 1.4, 2.e6},
-                        {0., 0., 6.e7}};
+    double par[4][3] = { { 2120., 1.63, 4.e3 },
+                         { 13.4, 1.4, 3.e4 },
+                         { 1.14, 1.4, 2.e6 },
+                         { 0., 0., 6.e7 } };
     double z = 26.;
     for (int i = 0; i < 3; ++i) {
       flux += 1.e3 * par[i][0] * pow(1000. * E, -1. - par[i][1]) *
@@ -107,9 +107,8 @@ double integrated_flux(const int type, const double E1, const double E2) {
 std::vector<double> striparea() {
   std::vector<double> strip;
   for (int i = 0; i < kNZenBin; ++i) {
-    double tmp_area =
-        2. * PI *
-        (cos(i * kZenBinWidth * D2R) - cos((i + 1) * kZenBinWidth * D2R));
+    double tmp_area = 2. * PI * (cos(i * kZenBinWidth * D2R) -
+                                 cos((i + 1) * kZenBinWidth * D2R));
     strip.emplace_back(tmp_area);
   }
   return strip;
@@ -118,7 +117,7 @@ std::vector<double> striparea() {
 std::vector<double> binned_integrated_flux(const int type) {
   // unequal-bin-width compound Simpson method.
   std::vector<double> binned_integrated_flux;
-  double energy_bin[] = {0.01, 0.1, 1., 1.e1, 1.e2, 1.e3};
+  double energy_bin[] = { 0.01, 0.1, 1., 1.e1, 1.e2, 1.e3 };
   int bin_number = sizeof(energy_bin) / sizeof(energy_bin[0]) - 1;
   for (int i = 0; i < bin_number; ++i) {
     double N = integrated_flux(type, energy_bin[i], energy_bin[i + 1]);
@@ -158,7 +157,12 @@ inwindow_duration_of_zenith_bin(const double window_radius,
       if (c + b < a) { // window circle contains strip circle.
         A = PI;
       } else { // two circles have some overlap.
-        A = acos((cos(a) - cos(b) * cos(c)) / (sin(b) * sin(c)));
+        double cccss = (cos(a) - cos(b) * cos(c)) / (sin(b) * sin(c));
+        if (cccss > 1.) // to ensure fabs(cccss) < 1
+          cccss = 1.;
+        if (cccss < -1.)
+          cccss = -1.;
+        A = acos(cccss);
       }
       double segment_ratio = A / PI;
       double time_of_crab_inbin = hzen->GetBinContent(j);
