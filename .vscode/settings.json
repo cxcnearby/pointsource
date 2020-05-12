@@ -3,6 +3,7 @@
         "*.icc": "cpp",
         "*.conf": "cpp",
         "*.bsh": "shellscript",
-        "string": "cpp"
+        "string": "cpp",
+        "compare.C": "cpp"
     }
 }
