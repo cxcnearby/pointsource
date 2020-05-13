@@ -106,7 +106,7 @@ double integrated_flux(const int type, const double E1, const double E2) {
 
 std::vector<double> striparea() {
   std::vector<double> strip;
-  for (int i = 0; i < kNZenBin; ++i) {
+  for (int i = 0; i < 360; ++i) {
     double tmp_area = 2. * PI * (cos(i * kZenBinWidth * D2R) -
                                  cos((i + 1) * kZenBinWidth * D2R));
     strip.emplace_back(tmp_area);
