@@ -20,9 +20,9 @@
 
 using namespace std;
 
-double corsika_event_number_rb[] = {1.e-6, 1.e8, 1.e8, 2.e6, 4.e5};
-double corsika_event_number_rc[] = {1.e-6, 9.914e7, 9.9963e7, 1.9998e6,
-                                    3.9988e5};
+double corsika_event_number_rb[] = { 1.e-6, 1.e8, 1.e8, 2.e6, 4.e5 };
+double corsika_event_number_rc[] = { 1.e-6,    9.914e7, 9.9963e7,
+                                     1.9998e6, 3.9988e5 };
 
 int main(int argc, char *argv[]) {
   if (argc < 5) {
@@ -94,7 +94,19 @@ int main(int argc, char *argv[]) {
     cInput1->GetEntry(ientry);
     erange = floor(log10(e0 / 1000.));
     int i_e0 = erange + 2;
-    int i_zen = int(zenmc / kZenBinWidth); // TODO: we use an ideal direction to draw a circle in the calculation of effective exposure time of a specific strip, while in the real experiment data, we use the reconstructed direction. Should we use a reconstructed direction in the calculation of the simulations? It seems not logical either. This issue due to the error of direction. We still use ideal direction here. But we should be careful, and the data located in the upper and lower edge show small difference.
+    int i_zen =
+        int(zenmc / kZenBinWidth); // TODO: we use an ideal direction to draw a
+                                   // circle in the calculation of effective
+                                   // exposure time of a specific strip, while
+                                   // in the real experiment data, we use the
+                                   // reconstructed direction. Should we use a
+                                   // reconstructed direction in the calculation
+                                   // of the simulations? It seems not logical
+                                   // either. This issue due to the error of
+                                   // direction. We still use ideal direction
+                                   // here. But we should be careful, and the
+                                   // data located in the upper and lower edge
+                                   // show small difference.
     if (type == 0) {
       weight = bin_flux[i_e0] * point_time_zen[i_zen] * kArea *
                cos((i_zen + 0.5) * kZenBinWidth * D2R) /
