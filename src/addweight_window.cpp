@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
   TH1F *hzen = (TH1F *)fcrab->Get("hzen");
 
   TFile *foroot = new TFile(outroot.c_str(), "recreate");
-  double weight;
+  float weight;
   TTree *trec = cInput1->CloneTree(0);
   trec->Branch("type", &type);
   trec->Branch("weight", &weight);
