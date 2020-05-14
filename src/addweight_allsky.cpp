@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
   tstat->Branch("sum_nsel", &sum_nsel);
   Long64_t nentries;
   nentries = cInput2->GetEntries();
-  for (int ientry = 0; ientry < nentries; ++ientry) {
+  for (Long64_t ientry = 0; ientry < nentries; ++ientry) {
     cInput2->GetEntry(ientry);
     sum_ntot += ntot;
     sum_nsel += nsel;
@@ -81,16 +81,16 @@ int main(int argc, char *argv[]) {
   delete cInput2;
   vector<double> strip = striparea();
   vector<double> bin_flux = binned_integrated_flux(type);
-  nentries = cInput1->GetEntries();
   double totalarea = 2. * PI * (1. - cos(60. * D2R));
-  for (int ientry = 0; ientry < nentries; ++ientry) {
+  nentries = cInput1->GetEntries();
+  for (Long64_t ientry = 0; ientry < nentries; ++ientry) {
     cInput1->GetEntry(ientry);
+    erange = floor(log10(e0 / 1000.));
+    int i_e0 = erange + 2;
+    int i_zen = int(zenmc / kZenBinWidth);
     if (type == 0) {
       weight = 0.;
     } else {
-      erange = floor(log10(e0 / 1000.));
-      int i_e0 = erange + 2;
-      int i_zen = int(zenmc / kZenBinWidth);
       weight = bin_flux[i_e0] * strip[i_zen] * 86400. * kArea *
                cos((i_zen + 0.5) * kZenBinWidth * D2R) /
                (sum_ntot * strip[i_zen] / totalarea);

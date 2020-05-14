@@ -20,9 +20,9 @@
 
 using namespace std;
 
-double corsika_event_number_rb[] = { 1.e-6, 1.e8, 1.e8, 2.e6, 4.e5 };
-double corsika_event_number_rc[] = { 1.e-6,    9.914e7, 9.9963e7,
-                                     1.9998e6, 3.9988e5 };
+double corsika_event_number_rb[] = {1.e-6, 1.e8, 1.e8, 2.e6, 4.e5};
+double corsika_event_number_rc[] = {1.e-6, 9.914e7, 9.9963e7, 1.9998e6,
+                                    3.9988e5};
 
 int main(int argc, char *argv[]) {
   if (argc < 5) {
@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
     cout << "wrong file!" << endl;
     exit(1);
   }
-  Float_t zenmc, e0, zenc;
+  Float_t zenmc, e0;
   cInput1->SetBranchAddress("zenmc", &zenmc);
   cInput1->SetBranchAddress("e0", &e0);
   treename = "tstat";
@@ -77,7 +77,7 @@ int main(int argc, char *argv[]) {
   tstat->Branch("sum_nsel", &sum_nsel);
   Long64_t nentries;
   nentries = cInput2->GetEntries();
-  for (int ientry = 0; ientry < nentries; ++ientry) {
+  for (Long64_t ientry = 0; ientry < nentries; ++ientry) {
     cInput2->GetEntry(ientry);
     sum_ntot += ntot;
     sum_nsel += nsel;
@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
       inwindow_duration_of_zenith_bin(window_radius, direction_error);
   double totalarea = 2. * PI * (1. - cos(60. * D2R));
   nentries = cInput1->GetEntries();
-  for (int ientry = 0; ientry < nentries; ++ientry) {
+  for (Long64_t ientry = 0; ientry < nentries; ++ientry) {
     cInput1->GetEntry(ientry);
     erange = floor(log10(e0 / 1000.));
     int i_e0 = erange + 2;
