@@ -132,7 +132,7 @@ std::vector<double> point_duration_of_zenith_bin() {
   TH1F *hzen = (TH1F *)fcrab->Get("hzen");
   const int kNzen = hzen->GetNbinsX();
   std::vector<double> duration;
-  for (int i = 0; i < kNzen; ++i) {
+  for (int i = 1; i <= kNzen; ++i) {
     duration.emplace_back(hzen->GetBinContent(i));
   }
   fcrab->Close();
@@ -150,7 +150,7 @@ inwindow_duration_of_zenith_bin(const double window_radius,
   for (int i = 0; i < kNzen; ++i) {
     double eff_time = 0.;
     const double b = (i + 0.5) * kZenBinWidth * D2R;
-    for (int j = 0; j < kNzen; ++j) {
+    for (int j = 1; j <= kNzen; ++j) {
       const double c = (j + 0.5) * kZenBinWidth * D2R;
       double A;
       if (fabs(c - b) > a) // two circles have no overlap.
