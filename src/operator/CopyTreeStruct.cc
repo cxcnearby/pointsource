@@ -201,7 +201,7 @@ bool CopyTreeStruct::IsExists(const TString leaf_name) {
 }
 
 double CopyTreeStruct::operator[](const TString leaf_name) const {
-  double value;
+  double value = -999.;
   if (mLeafInfo_.at(leaf_name).datatype == "Int_t") {
     value = mLeafInfo_.at(leaf_name).data_int[0];
   } else if (mLeafInfo_.at(leaf_name).datatype == "Long64_t") {

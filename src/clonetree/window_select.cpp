@@ -1,7 +1,8 @@
 /** @file evtselect.cc
  *  @author  changxc
  *  @date    2019.06.01
-/* ========================================================= */
+ * =========================================================
+ */
 #include "Astro.h"
 #include "constant.h"
 
@@ -40,21 +41,17 @@ int main(int argc, char *argv[]) {
                                  sin(PI / (2 * kWindowNumberOneSide + 1))) *
                             R2D;
   double dRA, dDEC, dZENITH, dAZI;
-  int source_type;
-  bool ifsource = false;
+  int source_type = 0;
   for (int i = 6; i < argc; ++i) {
     if (strcmp(argv[i], "-m") == 0) {
       source_type = 1;
-      ifsource = true;
     } else if (strcmp(argv[i], "-s") == 0) {
       source_type = 2;
-      ifsource = true;
     } else if (strcmp(argv[i], "-p") == 0) {
-      source_type = 0;
+      source_type = 3;
       if (i + 3 <= argc) {
         dRA = atof(argv[++i]);
         dDEC = atof(argv[++i]);
-        ifsource = true;
       } else {
         printf("wrong RA, DEC!\n");
         exit(0);
@@ -64,10 +61,10 @@ int main(int argc, char *argv[]) {
       exit(0);
     }
   }
-  // if (!ifsource) {
-  //   printf("source error!\n");
-  //   exit(0);
-  // }
+  if (!source_type) {
+    printf("source error!\n");
+    exit(0);
+  }
   FILE *fpLog = NULL;
   string::size_type pos = sOutputFile.rfind(".root");
   string sFpLog = sOutputFile.substr(0, pos) + ".log";

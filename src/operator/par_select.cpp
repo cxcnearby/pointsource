@@ -1,7 +1,8 @@
 /** @file evtselect.cc
  *  @author  changxc
  *  @date    2019.06.01
-/* ========================================================= */
+ *=========================================================
+ */
 #include "operator/CopyTreeStruct.h"
 
 #include "sofa.h"

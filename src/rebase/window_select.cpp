@@ -1,7 +1,8 @@
 /** @file evtselect.cc
  *  @author  changxc
  *  @date    2019.06.01
-/* ========================================================= */
+ * =========================================================
+ */
 #include "Astro.h"
 #include "constant.h"
 #include "rebase/CopyTreeStruct.h"
@@ -61,22 +62,18 @@ int main(int argc, char *argv[]) {
                                  sin(PI / (2 * kWindowNumberOneSide + 1))) *
                             R2D;
   double dRA, dDEC, dZENITH, dAZI;
-  int source_type;
+  int source_type = 0;
   string template_name;
-  bool ifsource = false;
   for (int i = 6; i < argc; ++i) {
     if (strcmp(argv[i], "-m") == 0) {
       source_type = 1;
-      ifsource = true;
     } else if (strcmp(argv[i], "-s") == 0) {
       source_type = 2;
-      ifsource = true;
     } else if (strcmp(argv[i], "-p") == 0) {
-      source_type = 0;
+      source_type = 3;
       if (i + 3 <= argc) {
         dRA = atof(argv[++i]);
         dDEC = atof(argv[++i]);
-        ifsource = true;
       } else {
         printf("wrong RA, DEC!\n");
         exit(0);
@@ -99,7 +96,7 @@ int main(int argc, char *argv[]) {
       exit(0);
     }
   }
-  if (!ifsource) {
+  if (!source_type) {
     printf("source error!\n");
     exit(0);
   }
@@ -120,7 +117,7 @@ int main(int argc, char *argv[]) {
   ctStart = clock();
 
   bool emptylist = true;
-  CopyTreeStruct *cp;
+  CopyTreeStruct *cp = nullptr;
   TChain *cInput;
   string sXROOTD = "root://eos01.ihep.ac.cn/";
   if (sInputFileList.find(".root") != string::npos) {

@@ -1,7 +1,8 @@
 /** @file evtselect.cc
  *  @author  changxc
  *  @date    2019.06.01
-/* ========================================================= */
+ * =========================================================
+ */
 #include "rebase/CopyTreeStruct.h"
 
 #include "sofa.h"
@@ -73,7 +74,7 @@ int main(int argc, char *argv[]) {
   ctStart = clock();
 
   bool emptylist = true;
-  CopyTreeStruct *cp;
+  CopyTreeStruct *cp = nullptr;
   TChain *cInput;
   string sXROOTD = "root://eos01.ihep.ac.cn/";
   if (sInputFileList.find(".root") != string::npos) {
