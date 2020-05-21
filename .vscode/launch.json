@@ -13,7 +13,7 @@
             "linux": {
                 "MIMode": "gdb",
                 "miDebuggerPath": "gdb",
-                "program": "${workspaceFolder}/bin/main"
+                "program": "${workspaceFolder}/bin/effmat.exe"
             },
             "osx": {
                 "MIMode": "lldb",
