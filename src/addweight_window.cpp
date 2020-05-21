@@ -20,21 +20,19 @@
 
 using namespace std;
 
-double corsika_event_number_rb[] = {1.e-6, 1.e8, 1.e8, 2.e6, 4.e5};
-double corsika_event_number_rc[] = {1.e-6, 9.914e7, 9.9963e7, 1.9998e6,
-                                    3.9988e5};
-
 int main(int argc, char *argv[]) {
-  if (argc < 5) {
+  if (argc < 6) {
     cout << argv[0]
-         << "  input.root  particle_type  window_radius  direction_error"
+         << "  input.root  trackstat.root  particle_type  window_radius  "
+            "direction_error"
          << endl;
     exit(1);
   }
   string input = argv[1];
-  int type = atoi(argv[2]);
-  const double window_radius = atof(argv[3]);
-  const double direction_error = atof(argv[4]);
+  TString trackstatroot = argv[2];
+  int type = atoi(argv[3]);
+  const double window_radius = atof(argv[4]);
+  const double direction_error = atof(argv[5]);
   string outroot = input.substr(0, input.length() - 5) + "wt.root";
 
   clock_t ctStart, ctFinish;
@@ -59,8 +57,6 @@ int main(int argc, char *argv[]) {
   Long64_t ntot, nsel;
   cInput2->SetBranchAddress("ntot", &ntot);
   cInput2->SetBranchAddress("nsel", &nsel);
-  TFile *fcrab = new TFile("crab_zen_dist.root", "read");
-  TH1F *hzen = (TH1F *)fcrab->Get("hzen");
 
   TFile *foroot = new TFile(outroot.c_str(), "recreate");
   float weight;
@@ -83,11 +79,12 @@ int main(int argc, char *argv[]) {
     sum_nsel += nsel;
   }
   delete cInput2;
-  vector<double> strip = striparea();
-  vector<double> bin_flux = binned_integrated_flux(type);
-  vector<double> point_time_zen = point_duration_of_zenith_bin();
-  vector<double> inwindow_time_zen =
-      inwindow_duration_of_zenith_bin(window_radius, direction_error);
+  vector<double> strip = StripArea(0., 180., kZenBinWidth);
+  vector<double> bin_flux =
+      BinnedIntegratedFlux(IntegratedFlux(Flux(type)), kEnergyBin);
+  vector<double> point_time_zen = PointDurationOfZenithBin(trackstatroot);
+  vector<double> inwindow_time_zen = InWindowDurationOfZenithBin(
+      trackstatroot, window_radius, direction_error);
   double totalarea = 2. * PI * (1. - cos(60. * D2R));
   nentries = cInput1->GetEntries();
   for (Long64_t ientry = 0; ientry < nentries; ++ientry) {

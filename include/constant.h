@@ -1,5 +1,8 @@
 #ifndef POINTSOURCE_INCLUDE_CONSTANT_H_
 #define POINTSOURCE_INCLUDE_CONSTANT_H
+
+#include <vector>
+
 /********** Constant **********/
 
 extern const double D2R; /*   pi/180  */
@@ -11,8 +14,18 @@ extern const double PI;  /* pi */
 extern const double observer_la; /*  latitude  */
 extern const double observer_lo; /* longtitude */
 
-extern const double kZenBinWidth;
-extern const int kNZenBin;
+/********** simulation ***********/
 extern const double kArea;
+extern const int kNType;
+extern std::vector<double> kEnergyBin;
+
+extern const double kZenBinWidth;
+extern const double kZenRange;
+extern const int kNZenBin;
+
+extern const int kNSmallbin;
+extern const int kPmtBinWidth;
+extern const int kPmtRange;
+extern const int kNPmtBin;
 
 #endif

@@ -1,15 +1,25 @@
 #ifndef POINTSOURCE_INCLUDE_FUNCTIONS_H_
 #define POINTSOURCE_INCLUDE_FUNCTIONS_H_
 
+#include "TString.h"
+
+#include <functional>
 #include <vector>
 
-double flux(const double E, const int type);
-double integrated_flux(const double E1, const double E2);
-std::vector<double> striparea();
-std::vector<double> binned_integrated_flux(const int type);
-std::vector<double> point_duration_of_zenith_bin();
+int TypeCor2TypeId(const int typecor);
+double GammaFlux(const double E);
+double CRFlux(const int type, const double E);
+std::function<double(double)> Flux(const int type);
+std::function<double(double, double)>
+IntegratedFlux(const std::function<double(double)> &func);
 std::vector<double>
-inwindow_duration_of_zenith_bin(const double window_radius,
-                                const double direction_error);
+BinnedIntegratedFlux(const std::function<double(double, double)> &func,
+                     std::vector<double> energy_bin);
+std::vector<double> StripArea(const double z1, const double z2,
+                              const double zwidth);
+std::vector<double> PointDurationOfZenithBin(const TString trackstatroot);
+std::vector<double> InWindowDurationOfZenithBin(const TString trackstatroot,
+                                                const double window_radius,
+                                                const double direction_error);
 
 #endif

@@ -1,7 +1,8 @@
 /** @file evtselect.cc
  *  @author  changxc
  *  @date    2019.06.01
-/* ========================================================= */
+ * =========================================================
+ */
 #include "Astro.h"
 #include "constant.h"
 
@@ -27,19 +28,20 @@ using namespace std;
 
 int main(int argc, char *argv[]) {
 
-  if (argc < 2) {
-    printf("%s  SourceType  [source RA]  [source DEC]\n(SourceType: 1 "
-           "for Moon, 2 for Sun, 0 need RA & DEC)\n",
+  if (argc < 3) {
+    printf("%s  trackstat.root  SourceType  [source RA]  [source "
+           "DEC]\n(SourceType: 1 for Moon, 2 for Sun, 0 need RA & DEC)\n",
            argv[0]);
     exit(0);
   }
-  int iSourceType = atoi(argv[1]);
+  TString trackstatroot = argv[1];
+  int iSourceType = atoi(argv[2]);
 
   double dRA, dDEC, dZENITH, dAZI;
 
-  if ((argc == 4) && (iSourceType == 0)) {
-    dRA = atof(argv[2]);
-    dDEC = atof(argv[3]);
+  if ((argc == 5) && (iSourceType == 0)) {
+    dRA = atof(argv[3]);
+    dDEC = atof(argv[4]);
   }
 
   clock_t ctStart, ctFinish;
@@ -47,7 +49,7 @@ int main(int argc, char *argv[]) {
 
   int n_zen = int(180. / kZenBinWidth);
   int n_azi = int(360. / kZenBinWidth);
-  TFile *f = new TFile("crab_zen_dist.root", "recreate");
+  TFile *f = new TFile(trackstatroot, "recreate");
   TH1F *hzen = new TH1F("hzen", "zen dist", n_zen, 0, 180);
   TH1F *hazi = new TH1F("hazi", "azi dist", n_azi, -180, 180);
 

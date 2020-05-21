@@ -20,10 +20,6 @@
 
 using namespace std;
 
-double corsika_event_number_rb[] = {1.e-6, 1.e8, 1.e8, 2.e6, 4.e5};
-double corsika_event_number_rc[] = {1.e-6, 9.914e7, 9.9963e7, 1.9998e6,
-                                    3.9988e5};
-
 int main(int argc, char *argv[]) {
   if (argc < 3) {
     cout << argv[0] << "  input.root  particle_type" << endl;
@@ -55,8 +51,6 @@ int main(int argc, char *argv[]) {
   Long64_t ntot, nsel;
   cInput2->SetBranchAddress("ntot", &ntot);
   cInput2->SetBranchAddress("nsel", &nsel);
-  TFile *fcrab = new TFile("crab_zen_dist.root", "read");
-  TH1F *hzen = (TH1F *)fcrab->Get("hzen");
 
   TFile *foroot = new TFile(outroot.c_str(), "recreate");
   float weight;
@@ -79,8 +73,9 @@ int main(int argc, char *argv[]) {
     sum_nsel += nsel;
   }
   delete cInput2;
-  vector<double> strip = striparea();
-  vector<double> bin_flux = binned_integrated_flux(type);
+  vector<double> strip = StripArea(0., 180., kZenBinWidth);
+  vector<double> bin_flux =
+      BinnedIntegratedFlux(IntegratedFlux(Flux(type)), kEnergyBin);
   double totalarea = 2. * PI * (1. - cos(60. * D2R));
   nentries = cInput1->GetEntries();
   for (Long64_t ientry = 0; ientry < nentries; ++ientry) {
