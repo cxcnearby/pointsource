@@ -16,8 +16,9 @@ extern const double observer_lo; /* longtitude */
 
 /********** simulation ***********/
 extern const double kArea;
-extern const int kNType;
-extern std::vector<double> kEnergyBin;
+extern std::vector<int> kTypeCode;
+extern std::vector<double> kTypePowerIndex;
+extern std::vector<double> kEnergyBounds;
 
 extern const double kZenBinWidth;
 extern const double kZenRange;

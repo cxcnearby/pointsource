@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
   delete cInput2;
   vector<double> strip = StripArea(0., 180., kZenBinWidth);
   vector<double> bin_flux =
-      BinnedIntegratedFlux(IntegratedFlux(Flux(type)), kEnergyBin);
+      BinnedIntegratedFlux(IntegratedFlux(Flux(type)), kEnergyBounds);
   vector<double> point_time_zen = PointDurationOfZenithBin(trackstatroot);
   vector<double> inwindow_time_zen = InWindowDurationOfZenithBin(
       trackstatroot, window_radius, direction_error);

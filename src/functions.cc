@@ -108,8 +108,7 @@ BinnedIntegratedFlux(const std::function<double(double, double)> &func,
                      std::vector<double> energy_bin) {
   // unequal-bin-width compound Simpson method.
   std::vector<double> binned_integrated_flux;
-  int bin_number = energy_bin.size() - 1;
-  for (int i = 0; i < bin_number; ++i) {
+  for (unsigned int i = 0; i < energy_bin.size() - 1; ++i) {
     double N = func(energy_bin[i], energy_bin[i + 1]);
     binned_integrated_flux.emplace_back(N);
   }

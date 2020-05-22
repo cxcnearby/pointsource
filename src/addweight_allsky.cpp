@@ -75,7 +75,7 @@ int main(int argc, char *argv[]) {
   delete cInput2;
   vector<double> strip = StripArea(0., 180., kZenBinWidth);
   vector<double> bin_flux =
-      BinnedIntegratedFlux(IntegratedFlux(Flux(type)), kEnergyBin);
+      BinnedIntegratedFlux(IntegratedFlux(Flux(type)), kEnergyBounds);
   double totalarea = 2. * PI * (1. - cos(60. * D2R));
   nentries = cInput1->GetEntries();
   for (Long64_t ientry = 0; ientry < nentries; ++ientry) {

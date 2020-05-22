@@ -9,10 +9,14 @@ const double PI = 3.14159265358979323846; /* pi */
 const double observer_la = 29.357656306;  /*  latitude  */
 const double observer_lo = 100.138794639; /* longtitude */
 
+// simulation parameters
 const double kArea = 2000. * 2000.;
-const int kNType = 6;
-std::vector<double> kEnergyBin = {0.01, 0.1, 1., 1.e1, 1.e2, 1.e3};
+std::vector<int> kTypeCode = {0, 14, 402, 1407, 2513, 5626};
+std::vector<double> kTypePowerIndex = {-2.62, -2.71, -2.64,
+                                       -2.68, -2.66, -2.59};
+std::vector<double> kEnergyBounds = {0.01, 0.1, 1., 1.e1, 1.e2, 1.e3};
 
+// histogram parameters
 const double kZenBinWidth = 0.5;
 const double kZenRange = 60.;
 const int kNZenBin = kZenRange / kZenBinWidth;
