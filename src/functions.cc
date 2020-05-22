@@ -1,9 +1,6 @@
 #include "functions.h"
 #include "constant.h"
 
-#include "TFile.h"
-#include "TH1.h"
-#include <functional>
 #include <iostream>
 #include <math.h>
 

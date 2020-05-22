@@ -42,7 +42,9 @@ int main(int argc, char *argv[]) {
     cout << "wrong file!" << endl;
     exit(1);
   }
+  Int_t nfitc;
   Float_t zenmc, e0;
+  cInput1->SetBranchAddress("nfitc", &nfitc);
   cInput1->SetBranchAddress("zenmc", &zenmc);
   cInput1->SetBranchAddress("e0", &e0);
   treename = "tstat";
@@ -94,7 +96,20 @@ int main(int argc, char *argv[]) {
   }
   delete cInput1;
   tstat->Fill();
+  TH1F *h_e0 = FillHist1D(input.c_str(), "trec", Form("he0%d", type),
+                          Form("e0_%d", type), "e0", e0, kNEnergyBin, -2, 3);
+  TH2F *h_e0_zenmc =
+      FillHist2D(input.c_str(), "trec", Form("he0zenmc%d", type),
+                 Form("e0_zenmc_%d", type), "e0", e0, kNEnergyBin, -2, 3,
+                 "zenmc", zenmc, kNZenBin, 0, kZenRange);
+  TH3F *h_e0_zenmc_nfitc = FillHist3D(
+      input.c_str(), "trec", Form("he0zenmcnfitc%d", type),
+      Form("e0_zenmc_nfitc_%d", type), "e0", e0, kNEnergyBin, -2, 3, "zenmc",
+      zenmc, kNZenBin, 0, kZenRange, "nfitc", nfitc, kNPmtBin, 0, kPmtRange);
   foroot->cd();
+  h_e0->Write("", TObject::kOverwrite);
+  h_e0_zenmc->Write("", TObject::kOverwrite);
+  h_e0_zenmc_nfitc->Write("", TObject::kOverwrite);
   tstat->Write("", TObject::kOverwrite);
   trec->Write("", TObject::kOverwrite);
   foroot->Close();
