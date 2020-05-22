@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
   const double kZenithMin = asin(sin(kWindowRadius * D2R) /
                                  sin(PI / (2 * kWindowNumberOneSide + 1))) *
                             R2D;
-  double dRA, dDEC, dZENITH, dAZI;
+  double dRA, dDEC, dZEN, dAZI;
   int source_type = 0;
   for (int i = 6; i < argc; ++i) {
     if (strcmp(argv[i], "-m") == 0) {
@@ -165,19 +165,19 @@ int main(int argc, char *argv[]) {
     }
     double ri, di, hob, dob, rob;
     iauAtciqz(dRA * D2R, dDEC * D2R, &astrom, &ri, &di);
-    iauAtioq(ri, di, &astrom, &dAZI, &dZENITH, &hob, &dob, &rob);
+    iauAtioq(ri, di, &astrom, &dAZI, &dZEN, &hob, &dob, &rob);
     dAZI = azirange(dAZI * R2D);
-    dZENITH = dZENITH * R2D;
-    if (dZENITH > kZenithMin && dZENITH < kZenithMax) {
+    dZEN = dZEN * R2D;
+    if (dZEN > kZenithMin && dZEN < kZenithMax) {
       hexpo->Fill(time_1);
       azic = 60.54 - azic;
       azic = azirange(azic);
       for (id = -kWindowNumberOneSide; id <= kWindowNumberOneSide; id++) {
         double dAziDiff =
-            2 * asin(sin(kWindowRadius * D2R) / sin(dZENITH * D2R)) * R2D * id;
+            2 * asin(sin(kWindowRadius * D2R) / sin(dZEN * D2R)) * R2D * id;
         double dAZIid = dAZI + dAziDiff;
         dAZIid = azirange(dAZIid);
-        theta = distance_horizontal(dZENITH, dAZIid, zenc, azic);
+        theta = distance_horizontal(dZEN, dAZIid, zenc, azic);
         if (theta < kWindowRadius) {
           double daziid = azic - dAziDiff;
           daziid = azirange(daziid);
