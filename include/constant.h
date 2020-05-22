@@ -19,12 +19,14 @@ extern const double kArea;
 extern std::vector<int> kTypeCode;
 extern std::vector<double> kTypePowerIndex;
 extern std::vector<double> kEnergyBounds;
+extern const int kNEbin;
+extern const int kNESmallbin;
+extern const int kNEnergyBin;
 
 extern const double kZenBinWidth;
 extern const double kZenRange;
 extern const int kNZenBin;
 
-extern const int kNSmallbin;
 extern const int kPmtBinWidth;
 extern const int kPmtRange;
 extern const int kNPmtBin;

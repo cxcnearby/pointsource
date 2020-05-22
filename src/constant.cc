@@ -15,13 +15,15 @@ std::vector<int> kTypeCode = {0, 14, 402, 1407, 2513, 5626};
 std::vector<double> kTypePowerIndex = {-2.62, -2.71, -2.64,
                                        -2.68, -2.66, -2.59};
 std::vector<double> kEnergyBounds = {0.01, 0.1, 1., 1.e1, 1.e2, 1.e3};
+const int kNEbin = kEnergyBounds.size() - 1;
+const int kNESmallbin = 4;
+const int kNEnergyBin = kNESmallbin * kNEbin;
 
 // histogram parameters
 const double kZenBinWidth = 0.5;
 const double kZenRange = 60.;
 const int kNZenBin = kZenRange / kZenBinWidth;
 
-const int kNSmallbin = 4;
 const int kPmtBinWidth = 10;
 const int kPmtRange = 900;
 const int kNPmtBin = kPmtRange / kPmtBinWidth;
