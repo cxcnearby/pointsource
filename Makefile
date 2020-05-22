@@ -13,7 +13,7 @@ EXECUTABLE	:= $(SOURCES:.cpp=.exe)
 EXECUTABLE	:= $(subst $(SRC), $(BIN), $(EXECUTABLE))
 
 CXX			:= g++
-CXXFLAGS	:= -Wall -g -O2 `root-config --cflags --libs ` -lMinuit -I$(INC) -L$(LIB) $(INCLUDES) $(LIBRARIES)
+CXXFLAGS	:= -Wall -Wextra -Wno-unused-variable -Wpointer-arith -Wunreachable-code -Wshadow -g -O2 `root-config --cflags --libs ` -lMinuit -I$(INC) -L$(LIB) $(INCLUDES) $(LIBRARIES)
 
 all: $(EXECUTABLE)
 
