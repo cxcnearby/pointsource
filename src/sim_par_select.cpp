@@ -78,14 +78,14 @@ int main(int argc, char *argv[]) {
 
   int type = GetTypeFromDir(sInputFileList);
   TFile *fSelected = TFile::Open(sOutputFile.c_str(), "recreate");
-  TH1F *h_e0 = new TH1F(Form("h_e0_%d", type), Form("log10(e0) %d", type),
+  TH1F *h_e0 = new TH1F(Form("h_e0_%d", type), Form("log10(e0) %d (TeV)", type),
                         kNEnergyBin, -2, 3);
   TH2F *h_e0_zenmc =
-      new TH2F(Form("h_e0_zenmc_%d", type), Form("log10(e0) x zenmc %d", type),
+      new TH2F(Form("h_e0_zenmc_%d", type), Form("log10(e0) x zenmc %d (TeV)", type),
                kNEnergyBin, -2, 3, kNZenBin, 0, kZenRange);
   TH3F *h_e0_zenmc_nfitc =
       new TH3F(Form("h_e0_zenmc_nfitc_%d", type),
-               Form("log10(e0) x zenmc x nfitc %d", type), kNEnergyBin, -2, 3,
+               Form("log10(e0) x zenmc x nfitc %d (TeV)", type), kNEnergyBin, -2, 3,
                kNZenBin, 0, kZenRange, kNPmtBin, 0, kPmtRange);
   TTree *trec = new TTree("trec", "par selected events");
   trec->Branch("type", &type);
@@ -158,9 +158,9 @@ int main(int argc, char *argv[]) {
         // v[283] -= 90.;
         v[278] += 75.5;
         v[279] += 56.5;
-        h_e0->Fill(v[3]);
-        h_e0_zenmc->Fill(v[3], v[10]);
-        h_e0_zenmc_nfitc->Fill(v[3], v[10], u[5]);
+        h_e0->Fill(log10(v[3] / 1000.));
+        h_e0_zenmc->Fill(log10(v[3] / 1000.), v[10]);
+        h_e0_zenmc_nfitc->Fill(log10(v[3] / 1000.), v[10], u[5]);
         trec->Fill();
         ++nsel;
       }
@@ -178,9 +178,9 @@ int main(int argc, char *argv[]) {
         v[279] += 56.5;
         v[286] += 75.5;
         v[287] += 56.5;
-        h_e0->Fill(v[3]);
-        h_e0_zenmc->Fill(v[3], v[10]);
-        h_e0_zenmc_nfitc->Fill(v[3], v[10], u[5]);
+        h_e0->Fill(log10(v[3] / 1000.));
+        h_e0_zenmc->Fill(log10(v[3] / 1000.), v[10]);
+        h_e0_zenmc_nfitc->Fill(log10(v[3] / 1000.), v[10], u[5]);
         trec->Fill();
         ++nsel;
       }
