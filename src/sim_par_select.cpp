@@ -5,6 +5,7 @@
  */
 #include "Astro.h"
 #include "constant.h"
+#include "functions.h"
 
 #include "sofa.h"
 
@@ -13,6 +14,8 @@
 #include "TF1.h"
 #include "TFile.h"
 #include "TH1.h"
+#include "TH2.h"
+#include "TH3.h"
 #include "TLeaf.h"
 #include "TROOT.h"
 #include "TTree.h"
@@ -73,8 +76,19 @@ int main(int argc, char *argv[]) {
   int v_size = leaf->GetNdata();
   const int kVersion = v_size < 300 ? 1 : 2;
 
+  int type = GetTypeFromDir(sInputFileList);
   TFile *fSelected = TFile::Open(sOutputFile.c_str(), "recreate");
+  TH1F *h_e0 = new TH1F(Form("h_e0_%d", type), Form("log10(e0) %d", type),
+                        kNEnergyBin, -2, 3);
+  TH2F *h_e0_zenmc =
+      new TH2F(Form("h_e0_zenmc_%d", type), Form("log10(e0) x zenmc %d", type),
+               kNEnergyBin, -2, 3, kNZenBin, 0, kZenRange);
+  TH3F *h_e0_zenm_nfitc =
+      new TH3F(Form("h_e0_zenmc_nfitc_%d", type),
+               Form("log10(e0) x zenmc x nfitc %d", type), kNEnergyBin, -2, 3,
+               kNZenBin, 0, kZenRange, kNPmtBin, 0, kPmtRange);
   TTree *trec = new TTree("trec", "par selected events");
+  trec->Branch("type", &type);
   trec->Branch("npmtinshower", &u[1]);
   trec->Branch("noise", &u[2]);
   trec->Branch("nhit", &u[3]);

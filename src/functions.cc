@@ -4,6 +4,22 @@
 #include <iostream>
 #include <math.h>
 
+int GetTypeFromDir(const std::string &dir) {
+  std::map<std::string, int> typecor = {{"Gamma", 0},     {"Proton", 14},
+                                        {"Helium", 402},  {"CNO", 1407},
+                                        {"MgAlSi", 2513}, {"Iron", 5626}};
+  int type = -999;
+  for (auto &&i : typecor) {
+    std::string expr = ".*" + i.first + ".*";
+    std::regex pattern(expr, std::regex::icase);
+    if (std::regex_match(dir, pattern)) {
+      type = i.second;
+      break;
+    }
+  }
+  return type;
+}
+
 int TypeCor2TypeId(const int typecor) {
   int i_type = -999;
   switch (typecor) {
