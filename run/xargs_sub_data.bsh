@@ -1,7 +1,7 @@
 #!/bin/bash
 StartDate=20191101
 EndDate=20191231
-HepSubBsh=./hep_sub_select.bsh
+HepSubBsh=./sub_select.bsh
 InputListDir=/afs/ihep.ac.cn/users/c/changxc/scratchfs/pointsource/run/data_rc
 OutputDir=/afs/ihep.ac.cn/users/c/changxc/scratchfs/output/pointsource/window_rc
 read -t 30 -n 1 -p "It is very dangerous that valuable output data may be overwritten, check it first!  Press \"y\" to CONTINUE or else to exit: " ans
