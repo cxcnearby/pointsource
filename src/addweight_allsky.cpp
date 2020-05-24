@@ -48,15 +48,16 @@ int main(int argc, char *argv[]) {
   t2->SetBranchAddress("nsel", &nsel);
 
   TFile *foroot = new TFile(outroot.c_str(), "recreate");
-  TH1F *h1 = (TH1F *)fin->Get(Form("h_e0_%d", type))->Clone();
-  TH2F *h2 = (TH2F *)fin->Get(Form("h_e0_zenmc_%d", type))->Clone();
-  TH3F *h3 = (TH3F *)fin->Get(Form("h_e0_zenmc_nfitc_%d", type))->Clone();
-  foroot->WriteTObject(h1, "WriteDelete");
-  foroot->WriteTObject(h2, "WriteDelete");
-  foroot->WriteTObject(h3, "WriteDelete");
-  delete h1;
-  delete h2;
-  delete h3;
+  TH1F *h_e0 = (TH1F *)fin->Get(Form("h_e0_%d", type))->Clone();
+  TH2F *h_e0_zenmc = (TH2F *)fin->Get(Form("h_e0_zenmc_%d", type))->Clone();
+  TH3F *h_e0_zenmc_nfitc =
+      (TH3F *)fin->Get(Form("h_e0_zenmc_nfitc_%d", type))->Clone();
+  foroot->WriteTObject(h_e0, "WriteDelete");
+  foroot->WriteTObject(h_e0_zenmc, "WriteDelete");
+  foroot->WriteTObject(h_e0_zenmc_nfitc, "WriteDelete");
+  delete h_e0;
+  delete h_e0_zenmc;
+  delete h_e0_zenmc_nfitc;
   float weight;
   TTree *trec = t1->CloneTree(0);
   trec->Branch("weight", &weight);

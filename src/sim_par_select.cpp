@@ -83,7 +83,7 @@ int main(int argc, char *argv[]) {
   TH2F *h_e0_zenmc =
       new TH2F(Form("h_e0_zenmc_%d", type), Form("log10(e0) x zenmc %d", type),
                kNEnergyBin, -2, 3, kNZenBin, 0, kZenRange);
-  TH3F *h_e0_zenm_nfitc =
+  TH3F *h_e0_zenmc_nfitc =
       new TH3F(Form("h_e0_zenmc_nfitc_%d", type),
                Form("log10(e0) x zenmc x nfitc %d", type), kNEnergyBin, -2, 3,
                kNZenBin, 0, kZenRange, kNPmtBin, 0, kPmtRange);
@@ -160,7 +160,7 @@ int main(int argc, char *argv[]) {
         v[279] += 56.5;
         h_e0->Fill(v[3]);
         h_e0_zenmc->Fill(v[3], v[10]);
-        h_e0_zenm_nfitc->Fill(v[3], v[10], u[5]);
+        h_e0_zenmc_nfitc->Fill(v[3], v[10], u[5]);
         trec->Fill();
         ++nsel;
       }
@@ -180,7 +180,7 @@ int main(int argc, char *argv[]) {
         v[287] += 56.5;
         h_e0->Fill(v[3]);
         h_e0_zenmc->Fill(v[3], v[10]);
-        h_e0_zenm_nfitc->Fill(v[3], v[10], u[5]);
+        h_e0_zenmc_nfitc->Fill(v[3], v[10], u[5]);
         trec->Fill();
         ++nsel;
       }
@@ -191,6 +191,9 @@ int main(int argc, char *argv[]) {
   }
   delete cInput;
   tstat->Fill();
+  fSelected->WriteTObject(h_e0, "WriteDelete");
+  fSelected->WriteTObject(h_e0_zenmc, "WriteDelete");
+  fSelected->WriteTObject(h_e0_zenmc_nfitc, "WriteDelete");
   trec->Write("", TObject::kOverwrite);
   tstat->Write("", TObject::kOverwrite);
   fSelected->Close();
