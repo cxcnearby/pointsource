@@ -158,6 +158,9 @@ int main(int argc, char *argv[]) {
         // v[283] -= 90.;
         v[278] += 75.5;
         v[279] += 56.5;
+        h_e0->Fill(v[3]);
+        h_e0_zenmc->Fill(v[3], v[10]);
+        h_e0_zenm_nfitc->Fill(v[3], v[10], u[5]);
         trec->Fill();
         ++nsel;
       }
@@ -175,6 +178,9 @@ int main(int argc, char *argv[]) {
         v[279] += 56.5;
         v[286] += 75.5;
         v[287] += 56.5;
+        h_e0->Fill(v[3]);
+        h_e0_zenmc->Fill(v[3], v[10]);
+        h_e0_zenm_nfitc->Fill(v[3], v[10], u[5]);
         trec->Fill();
         ++nsel;
       }
