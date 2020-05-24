@@ -21,49 +21,50 @@
 using namespace std;
 
 int main(int argc, char *argv[]) {
-  if (argc < 6) {
+  if (argc < 5) {
     cout << argv[0]
-         << "  input.root  trackstat.root  particle_type  window_radius  "
+         << "  input.root  trackstat.root  window_radius  "
             "direction_error"
          << endl;
     exit(1);
   }
   string input = argv[1];
   TString trackstatroot = argv[2];
-  int type = atoi(argv[3]);
-  const double window_radius = atof(argv[4]);
-  const double direction_error = atof(argv[5]);
+  const double window_radius = atof(argv[3]);
+  const double direction_error = atof(argv[4]);
   string outroot = input.substr(0, input.length() - 5) + "wt.root";
 
   clock_t ctStart, ctFinish;
   ctStart = clock();
 
   TString treename = "trec";
-  TChain *cInput1 = new TChain(treename);
-  TFile *testfile = TFile::Open(input.c_str(), "READ");
-  if (testfile && testfile->Get(treename)) {
-    testfile->Close();
-    cInput1->Add(input.c_str());
-  } else {
-    cout << "wrong file!" << endl;
-    exit(1);
-  }
-  Int_t nfitc;
+  TFile *fin = TFile::Open(input.c_str(), "READ");
+  TTree *t1 = (TTree *)fin->Get(treename);
+  Int_t type, nfitc;
   Float_t zenmc, e0;
-  cInput1->SetBranchAddress("nfitc", &nfitc);
-  cInput1->SetBranchAddress("zenmc", &zenmc);
-  cInput1->SetBranchAddress("e0", &e0);
+  t1->SetBranchAddress("type", &type);
+  t1->SetBranchAddress("nfitc", &nfitc);
+  t1->SetBranchAddress("zenmc", &zenmc);
+  t1->SetBranchAddress("e0", &e0);
+  t1->GetEntry(0);
   treename = "tstat";
-  TChain *cInput2 = new TChain(treename);
-  cInput2->Add(input.c_str());
+  TTree *t2 = (TTree *)fin->Get(treename);
   Long64_t ntot, nsel;
-  cInput2->SetBranchAddress("ntot", &ntot);
-  cInput2->SetBranchAddress("nsel", &nsel);
+  t2->SetBranchAddress("ntot", &ntot);
+  t2->SetBranchAddress("nsel", &nsel);
 
   TFile *foroot = new TFile(outroot.c_str(), "recreate");
+  TH1F *h1 = (TH1F *)fin->Get(Form("h_e0_%d", type))->Clone();
+  TH2F *h2 = (TH2F *)fin->Get(Form("h_e0_zenmc_%d", type))->Clone();
+  TH3F *h3 = (TH3F *)fin->Get(Form("h_e0_zenmc_nfitc_%d", type))->Clone();
+  foroot->WriteTObject(h1, "WriteDelete");
+  foroot->WriteTObject(h2, "WriteDelete");
+  foroot->WriteTObject(h3, "WriteDelete");
+  delete h1;
+  delete h2;
+  delete h3;
   float weight;
-  TTree *trec = cInput1->CloneTree(0);
-  trec->Branch("type", &type);
+  TTree *trec = t1->CloneTree(0);
   trec->Branch("weight", &weight);
   int erange;
   Long64_t sum_ntot = 0;
@@ -74,13 +75,13 @@ int main(int argc, char *argv[]) {
   tstat->Branch("sum_ntot", &sum_ntot);
   tstat->Branch("sum_nsel", &sum_nsel);
   Long64_t nentries;
-  nentries = cInput2->GetEntries();
+  nentries = t2->GetEntries();
   for (Long64_t ientry = 0; ientry < nentries; ++ientry) {
-    cInput2->GetEntry(ientry);
+    t2->GetEntry(ientry);
     sum_ntot += ntot;
     sum_nsel += nsel;
   }
-  delete cInput2;
+  delete t2;
   vector<double> strip = StripArea(0., 180., kZenBinWidth);
   vector<double> bin_flux =
       BinnedIntegratedFlux(IntegratedFlux(Flux(type)), kEnergyBounds);
@@ -88,9 +89,9 @@ int main(int argc, char *argv[]) {
   vector<double> inwindow_time_zen = InWindowDurationOfZenithBin(
       trackstatroot, window_radius, direction_error);
   double totalarea = 2. * PI * (1. - cos(60. * D2R));
-  nentries = cInput1->GetEntries();
+  nentries = t1->GetEntries();
   for (Long64_t ientry = 0; ientry < nentries; ++ientry) {
-    cInput1->GetEntry(ientry);
+    t1->GetEntry(ientry);
     erange = floor(log10(e0 / 1000.));
     int i_e0 = erange + 2;
     int i_zen =
@@ -117,24 +118,10 @@ int main(int argc, char *argv[]) {
     }
     trec->Fill();
   }
-  delete cInput1;
+  delete t1;
   tstat->Fill();
-  TH1F *h_e0 = FillHist1D(input.c_str(), "trec", Form("he0%d", type),
-                          Form("e0_%d", type), "e0", e0, kNEnergyBin, -2, 3);
-  TH2F *h_e0_zenmc =
-      FillHist2D(input.c_str(), "trec", Form("he0zenmc%d", type),
-                 Form("e0_zenmc_%d", type), "e0", e0, kNEnergyBin, -2, 3,
-                 "zenmc", zenmc, kNZenBin, 0, kZenRange);
-  TH3F *h_e0_zenmc_nfitc = FillHist3D(
-      input.c_str(), "trec", Form("he0zenmcnfitc%d", type),
-      Form("e0_zenmc_nfitc_%d", type), "e0", e0, kNEnergyBin, -2, 3, "zenmc",
-      zenmc, kNZenBin, 0, kZenRange, "nfitc", nfitc, kNPmtBin, 0, kPmtRange);
-  foroot->cd();
-  h_e0->Write("", TObject::kOverwrite);
-  h_e0_zenmc->Write("", TObject::kOverwrite);
-  h_e0_zenmc_nfitc->Write("", TObject::kOverwrite);
-  tstat->Write("", TObject::kOverwrite);
-  trec->Write("", TObject::kOverwrite);
+  foroot->WriteTObject(trec, "WriteDelete");
+  foroot->WriteTObject(tstat, "WriteDelete");
   foroot->Close();
   ctFinish = clock();
   printf("Adding branches use %d s\n",

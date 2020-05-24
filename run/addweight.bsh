@@ -4,32 +4,33 @@ ExeDir=~/scratchfs/pointsource/bin
 cd ${ExeDir}
 for type in $(ls -d ${InputDir}/*/); do
     type=$(basename ${type})
-    case "${type}" in
-    Gamma)
-        mark=0
-        ;;
-    Proton)
-        mark=14
-        ;;
-    Helium)
-        mark=402
-        ;;
-    CNO)
-        mark=1407
-        ;;
-    MgAlSi)
-        mark=2513
-        ;;
-    Iron)
-        mark=5626
-        ;;
-    *) ;;
-
-    esac
+    # case "${type}" in  # old version
+    # Gamma)
+    #     mark=0
+    #     ;;
+    # Proton)
+    #     mark=14
+    #     ;;
+    # Helium)
+    #     mark=402
+    #     ;;
+    # CNO)
+    #     mark=1407
+    #     ;;
+    # MgAlSi)
+    #     mark=2513
+    #     ;;
+    # Iron)
+    #     mark=5626
+    #     ;;
+    # *) ;;
+    # esac
     for erange in $(ls -d ${InputDir}/${type}/*/); do
         erange=$(basename ${erange})
         hadd -f ${InputDir}/${type}/${erange}.root ${InputDir}/${type}/${erange}/list_*.root
-        ./addweight_allsky.exe ${InputDir}/${type}/${erange}.root ${mark}
+        ./addweight_allsky.exe ${InputDir}/${type}/${erange}.root
+        ./addweight_window.exe ${InputDir}/${type}/${erange}.root 5 0
+        # ./addweight_allsky.exe ${InputDir}/${type}/${erange}.root ${mark}  # old version
         # ./addweight_window.exe ${InputDir}/${type}/${erange}.root ${mark} 5 0
     done
     hadd -f ${InputDir}/${type}wt.root ${InputDir}/${type}/*wt.root
