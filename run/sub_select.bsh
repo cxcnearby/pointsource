@@ -13,18 +13,18 @@ JobCapacity=1000
 
 ########## window_select ##########
 
-ExeName=window_select.exe
-ArgString="3 3 45 -p 83.63 22.01"
-TmpDir=/afs/ihep.ac.cn/users/c/changxc/scratchfs/tmp_sub/moonshcheck/window/$(date "+%Y%m%d")/$(date "+%H%M")
+# ExeName=window_select.exe
+# ArgString="3 3 45 -p 83.63 22.01"
+# TmpDir=/afs/ihep.ac.cn/users/c/changxc/scratchfs/tmp_sub/moonshcheck/window/$(date "+%Y%m%d")/$(date "+%H%M")
 
 ########## window_select ##########
 
 ########## transform_sim ##########
 
-# ExeName=sim_par_select.exe
+ExeName=bin/sim_par_select.exe
 # ArgString="0 0"
-# # ArgString="100 15"
-# TmpDir=/afs/ihep.ac.cn/users/c/changxc/scratchfs/tmp_sub/moonshcheck/sim/$(date "+%Y%m%d")/$(date "+%H%M")
+ArgString="100 15"
+TmpDir=/afs/ihep.ac.cn/users/c/changxc/scratchfs/tmp_sub/moonshcheck/sim/$(date "+%Y%m%d")/$(date "+%H%M")
 
 ########## sim_par_select ##########
 

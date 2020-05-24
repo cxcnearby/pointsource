@@ -58,9 +58,9 @@ int main(int argc, char *argv[]) {
   TH2F *h_e0_zenmc = (TH2F *)fin->Get(Form("h_e0_zenmc_%d", type))->Clone();
   TH3F *h_e0_zenmc_nfitc =
       (TH3F *)fin->Get(Form("h_e0_zenmc_nfitc_%d", type))->Clone();
-  foroot->WriteTObject(h_e0, "WriteDelete");
-  foroot->WriteTObject(h_e0_zenmc, "WriteDelete");
-  foroot->WriteTObject(h_e0_zenmc_nfitc, "WriteDelete");
+  foroot->WriteTObject(h_e0, "", "WriteDelete");
+  foroot->WriteTObject(h_e0_zenmc, "", "WriteDelete");
+  foroot->WriteTObject(h_e0_zenmc_nfitc, "", "WriteDelete");
   delete h_e0;
   delete h_e0_zenmc;
   delete h_e0_zenmc_nfitc;
@@ -121,8 +121,8 @@ int main(int argc, char *argv[]) {
   }
   delete t1;
   tstat->Fill();
-  foroot->WriteTObject(trec, "WriteDelete");
-  foroot->WriteTObject(tstat, "WriteDelete");
+  foroot->WriteTObject(trec, "", "WriteDelete");
+  foroot->WriteTObject(tstat, "", "WriteDelete");
   foroot->Close();
   ctFinish = clock();
   printf("Adding branches use %d s\n",

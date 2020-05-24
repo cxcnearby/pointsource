@@ -191,9 +191,9 @@ int main(int argc, char *argv[]) {
   }
   delete cInput;
   tstat->Fill();
-  fSelected->WriteTObject(h_e0, "WriteDelete");
-  fSelected->WriteTObject(h_e0_zenmc, "WriteDelete");
-  fSelected->WriteTObject(h_e0_zenmc_nfitc, "WriteDelete");
+  fSelected->WriteTObject(h_e0, "", "WriteDelete");
+  fSelected->WriteTObject(h_e0_zenmc, "", "WriteDelete");
+  fSelected->WriteTObject(h_e0_zenmc_nfitc, "", "WriteDelete");
   trec->Write("", TObject::kOverwrite);
   tstat->Write("", TObject::kOverwrite);
   fSelected->Close();
