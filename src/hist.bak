@@ -1,0 +1,99 @@
+template <typename T>
+TH1F *FillHist1D(const TString &rootname, const TString &treename,
+                 const TString &histname, const TString &histtitle,
+                 const TString &xname, T &x, const int &xbins,
+                 const double &xlow, const double &xup) {
+  TH1F *h1 = new TH1F(histname, histtitle, xbins, xlow, xup);
+  TFile *f = TFile::Open(rootname, "read");
+  TTree *t = (TTree *)f->Get(treename);
+  t->SetBranchAddress(xname, &x);
+  Long64_t nentries = t->GetEntries();
+  for (Long64_t ientry = 0; ientry < nentries; ++ientry) {
+    t->GetEntry(ientry);
+    h1->Fill(log10(x / 1000.));
+  }
+  f->Close();
+  return h1;
+}
+template <typename T1, typename T2>
+TH2F *FillHist2D(const TString &rootname, const TString &treename,
+                 const TString &histname, const TString &histtitle,
+                 const TString &xname, T1 &x, const int &xbins,
+                 const double &xlow, const double &xup, const TString &yname,
+                 T2 &y, const int &ybins, const double &ylow,
+                 const double &yup) {
+  TH2F *h2 = new TH2F(histname, histtitle, xbins, xlow, xup, ybins, ylow, yup);
+  TFile *f = TFile::Open(rootname, "read");
+  TTree *t = (TTree *)f->Get(treename);
+  t->SetBranchAddress(xname, &x);
+  t->SetBranchAddress(yname, &y);
+  Long64_t nentries = t->GetEntries();
+  for (Long64_t ientry = 0; ientry < nentries; ++ientry) {
+    t->GetEntry(ientry);
+    h2->Fill(log10(x / 1000.), y);
+  }
+  f->Close();
+  return h2;
+}
+template <typename T1, typename T2, typename T3>
+TH3F *FillHist3D(const TString &rootname, const TString &treename,
+                 const TString &histname, const TString &histtitle,
+                 const TString &xname, T1 &x, const int &xbins,
+                 const double &xlow, const double &xup, const TString &yname,
+                 T2 &y, const int &ybins, const double &ylow, const double &yup,
+                 const TString &zname, T3 &z, const int &zbins,
+                 const double &zlow, const double &zup) {
+  TH3F *h3 = new TH3F(histname, histtitle, xbins, xlow, xup, ybins, ylow, yup,
+                      zbins, zlow, zup);
+  TFile *f = TFile::Open(rootname, "read");
+  TTree *t = (TTree *)f->Get(treename);
+  t->SetBranchAddress(xname, &x);
+  t->SetBranchAddress(yname, &y);
+  t->SetBranchAddress(zname, &z);
+  Long64_t nentries = t->GetEntries();
+  for (Long64_t ientry = 0; ientry < nentries; ++ientry) {
+    t->GetEntry(ientry);
+    h3->Fill(log10(x / 1000.), y, z);
+  }
+  f->Close();
+  return h3;
+}
+
+
+  // backup: another method to do the filling!
+
+  TH1F *h_e0 = FillHist1D(input.c_str(), "trec", Form("he0%d", type),
+                          Form("e0_%d", type), "e0", e0, kNEnergyBin, -2, 3);
+  TH2F *h_e0_zenmc =
+      FillHist2D(input.c_str(), "trec", Form("he0zenmc%d", type),
+                 Form("e0_zenmc_%d", type), "e0", e0, kNEnergyBin, -2, 3,
+                 "zenmc", zenmc, kNZenBin, 0, kZenRange);
+  TH3F *h_e0_zenmc_nfitc = FillHist3D(
+      input.c_str(), "trec", Form("he0zenmcnfitc%d", type),
+      Form("e0_zenmc_nfitc_%d", type), "e0", e0, kNEnergyBin, -2, 3, "zenmc",
+      zenmc, kNZenBin, 0, kZenRange, "nfitc", nfitc, kNPmtBin, 0, kPmtRange);
+  foroot->cd();
+  h_e0->Write("", TObject::kOverwrite);
+  h_e0_zenmc->Write("", TObject::kOverwrite);
+  h_e0_zenmc_nfitc->Write("", TObject::kOverwrite);
+
+  cInput1->Draw(Form("log10(e0 / 1000.)>>h_e0_%d(%d, %f, %f)", type,
+                     kNEnergyBin, -2., 3.),
+                "", "goff");
+  TH1F *h_e0 = (TH1F *)gDirectory->Get(Form("h_e0_%d", type));
+  foroot->WriteTObject(h_e0, "WriteDelete");
+  cInput1->Draw(
+      Form("zenmc:log10(e0 / 1000.)>>h_e0_zenmc_%d(%d, %f, %f, %d, %f, %f)",
+           type, kNEnergyBin, -2., 3., kNZenBin, 0., kZenRange),
+      "", "goff");
+  TH2F *h_e0_zenmc = (TH2F *)gDirectory->Get(Form("h_e0_zenmc_%d", type));
+  foroot->WriteTObject(h_e0_zenmc, "WriteDelete");
+  cInput1->Draw(Form("nfitc:zenmc:log10(e0 / 1000.)>>h_e0_zenmc_nfitc_%d(%d,
+  "
+                     "%f, %f, %d, %f, %f, %d, %f, %f)",
+                     type, kNEnergyBin, -2., 3., kNZenBin, 0., kZenRange,
+                     kNPmtBin, 0., double(kPmtRange)),
+                "", "goff");
+  TH3F *h_e0_zenmc_nfitc =
+      (TH3F *)gDirectory->Get(Form("h_e0_zenmc_nfitc_%d", type));
+  foroot->WriteTObject(h_e0_zenmc_nfitc, "WriteDelete");
