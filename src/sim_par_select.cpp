@@ -152,8 +152,8 @@ int main(int argc, char *argv[]) {
       if (iFail <= 0)
         continue;
       h_e0->Fill(log10(v[3] / 1000.));
-      h_e0_zenmc->Fill(log10(v[3] / 1000.), v[10]);
-      h_e0_zenmc_nfitc->Fill(log10(v[3] / 1000.), v[10], u[5]);
+      h_e0_zenmc->Fill(log10(v[3] / 1000.), v[10] * R2D);
+      h_e0_zenmc_nfitc->Fill(log10(v[3] / 1000.), v[10] * R2D, u[5]);
       if (u[5] > kNFitcMin && v[286] > kCompMin && u[11] > 0 && v[285] < 5) {
         v[10] *= R2D;
         v[11] = v[11] * R2D - 90.;
@@ -172,8 +172,8 @@ int main(int argc, char *argv[]) {
       if (iFail <= 0)
         continue;
       h_e0->Fill(log10(v[3] / 1000.));
-      h_e0_zenmc->Fill(log10(v[3] / 1000.), v[10]);
-      h_e0_zenmc_nfitc->Fill(log10(v[3] / 1000.), v[10], u[5]);
+      h_e0_zenmc->Fill(log10(v[3] / 1000.), v[10] * R2D);
+      h_e0_zenmc_nfitc->Fill(log10(v[3] / 1000.), v[10] * R2D, u[5]);
       if (u[5] > kNFitcMin && v[288] > kCompMin && u[11] > 0 && v[285] < 5) {
         v[10] *= R2D;
         v[11] = v[11] * R2D - 90.;
