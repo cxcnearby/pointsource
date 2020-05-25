@@ -22,8 +22,8 @@ JobCapacity=1000
 ########## transform_sim ##########
 
 ExeName=bin/sim_par_select.exe
-# ArgString="0 0"
-ArgString="100 15"
+ArgString="0 0"
+# ArgString="100 15"
 TmpDir=/afs/ihep.ac.cn/users/c/changxc/scratchfs/tmp_sub/moonshcheck/sim/$(date "+%Y%m%d")/$(date "+%H%M")
 
 ########## sim_par_select ##########
