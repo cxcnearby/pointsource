@@ -39,6 +39,10 @@ int main(int argc, char *argv[]) {
 
   TString treename = "trec";
   TFile *fin = TFile::Open(input.c_str(), "READ");
+  if (fin->GetListOfKeys()->GetEntries() == 0) {
+    cout << "input file error!" << endl;
+    exit(1);
+  }
   TTree *t1 = (TTree *)fin->Get(treename);
   Int_t type, nfitc;
   Float_t zenmc, e0;

@@ -1,5 +1,5 @@
 #!/bin/bash
-InputDir=~/scratchfs/output/moonshcheck/rebase/sim_rb_all00
+InputDir=~/scratchfs/output/pointsource/sim_rb_all00
 ExeDir=~/scratchfs/pointsource/bin
 cd ${ExeDir}
 for type in $(ls -d ${InputDir}/*/); do
@@ -28,8 +28,8 @@ for type in $(ls -d ${InputDir}/*/); do
     for erange in $(ls -d ${InputDir}/${type}/*/); do
         erange=$(basename ${erange})
         hadd -f ${InputDir}/${type}/${erange}.root ${InputDir}/${type}/${erange}/list_*.root
-        ./addweight_allsky.exe ${InputDir}/${type}/${erange}.root
-        ./addweight_window.exe ${InputDir}/${type}/${erange}.root 5 0
+        # ./addweight_allsky.exe ${InputDir}/${type}/${erange}.root
+        ./addweight_window.exe ${InputDir}/${type}/${erange}.root trackstat.root 3 0
         # ./addweight_allsky.exe ${InputDir}/${type}/${erange}.root ${mark}  # old version
         # ./addweight_window.exe ${InputDir}/${type}/${erange}.root ${mark} 5 0
     done
