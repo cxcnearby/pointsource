@@ -11,14 +11,18 @@
 
 using namespace std;
 
-TString track_root, eff_root, data_root;
+TString gtrack_root, geff_root, gdata_root;
+TH1F *gsim_nfitc, *gdata_nfitc;
+TH1F *ghtrack;
+TH3F *ghrecmat;
 
 double Chi2(const double *par);
-TH1F *SimNfitcDist(TString trackroot, TString effroot,
-                   const function<double(double)> &func);
+TH1F *Gethtrack(TString trackroot);
+TH3F *Gethrecmat(TString effroot);
+void SimNfitcDist(TH1F *ghsim, TH1F *htrack, TH3F *hrecmat,
+                  const function<double(double)> &func);
 TH1F *DataNfitcDist(TString dataroot);
 double CalChi2(TH1F *simnfitcdist, TH1F *datanfitcdist);
-double test(const double *par) { return par[0] + par[1] + par[2] + par[3]; }
 
 struct parinit {
   int npar = 4;
@@ -32,20 +36,18 @@ int main(int argc, char *argv[]) {
     cout << argv[0] << "  trackroot  effroot  dataroot" << endl;
     exit(0);
   }
-  track_root = argv[1];
-  eff_root = argv[2];
-  data_root = argv[3];
-  // ROOT::Minuit2::Minuit2Minimizer *fit =
-  //     new ROOT::Minuit2::Minuit2Minimizer(ROOT::Minuit2::kMigrad);
+  gtrack_root = argv[1];
+  geff_root = argv[2];
+  gdata_root = argv[3];
   ROOT::Math::Minimizer *fit =
       ROOT::Math::Factory::CreateMinimizer("Minuit2", "Migrad");
-  printf("test1\n");
   fit->SetMaxFunctionCalls(1000000);
   fit->SetMaxIterations(10000);
   fit->SetTolerance(0.001);
   parinit par;
+  gdata_nfitc = DataNfitcDist(gdata_root);
+  gsim_nfitc = new TH1F("nfitc", "nfitc dist", kNPmtBin, 0, kPmtRange);
   ROOT::Math::Functor f(&Chi2, par.npar);
-  printf("test2\n");
   fit->SetFunction(f);
   for (int i = 0; i < par.npar; ++i) {
     fit->SetVariable(i, par.parname[i], par.var[i], par.step[i]);
@@ -62,35 +64,41 @@ double Chi2(const double *par) {
   auto flux = [&](const double E) {
     return F0 * pow(E / E0, A + B * log(E / E0));
   };
-  TH1F *sim_nfitc = SimNfitcDist(track_root, eff_root, flux);
-  TH1F *data_nfitc = DataNfitcDist(data_root);
-  return CalChi2(sim_nfitc, data_nfitc);
+  SimNfitcDist(gsim_nfitc, ghtrack, ghrecmat, flux);
+  return CalChi2(gsim_nfitc, gdata_nfitc);
 }
 
-TH1F *SimNfitcDist(TString trackroot, TString effroot,
-                   const function<double(double)> &func) {
-  vector<double> point_time_zen = PointDurationOfZenithBin(trackroot);
-  TFile *fsim = TFile::Open(effroot, "READ");
-  TH3F *recmat = (TH3F *)fsim->Get("recmat0");
-  int nbinx = recmat->GetNbinsX();
+TH1F *Gethtrack(TString trackroot) {
+  TFile *ftrack = TFile::Open(trackroot, "READ");
+  ghtrack = (TH1F *)ftrack->Get("hzen");
+  return ghtrack;
+}
+
+TH3F *Gethrecmat(TString effroot) {
+  TFile *feff = TFile::Open(effroot, "READ");
+  ghrecmat = (TH3F *)feff->Get("recmat0");
+  return ghrecmat;
+}
+
+void SimNfitcDist(TH1F *ghsim, TH1F *htrack, TH3F *hrecmat,
+                  const function<double(double)> &func) {
+  int nbinx = hrecmat->GetNbinsX();
   vector<double> Ecuts;
   for (int i = 1; i <= nbinx + 1; ++i) {
-    double tmp_cut = recmat->GetXaxis()->GetBinLowEdge(i);
+    double tmp_cut = hrecmat->GetXaxis()->GetBinLowEdge(i);
     Ecuts.emplace_back(pow(10., tmp_cut));
   }
   vector<double> bin_flux = BinnedIntegratedFlux(IntegratedFlux(func), Ecuts);
-  TH1F *simnfitcdist = new TH1F("nfitc", "nfitc dist", kNPmtBin, 0, kPmtRange);
   for (int i = 1; i <= kNPmtBin; ++i) {
     double tmp = 0.;
-    for (int j = 0; j < kZenRange; ++j) {
+    for (int j = 1; j <= hrecmat->GetNbinsY(); ++j) {
       for (int k = 0; k < nbinx; ++k) {
-        tmp += bin_flux[k] * point_time_zen[j] *
-               recmat->GetBinContent(k + 1, j + 1, i);
+        tmp += bin_flux[k] * htrack->GetBinContent(j) *
+               hrecmat->GetBinContent(k + 1, j, i);
       }
     }
-    simnfitcdist->SetBinContent(i, tmp);
+    ghsim->SetBinContent(i, tmp);
   }
-  return simnfitcdist;
 }
 
 TH1F *DataNfitcDist(TString dataroot) {
