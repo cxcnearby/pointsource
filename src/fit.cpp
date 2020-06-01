@@ -71,11 +71,11 @@ TH1F *SimNfitcDist(TString trackroot, TString effroot,
                    const function<double(double)> &func) {
   vector<double> point_time_zen = PointDurationOfZenithBin(trackroot);
   TFile *fsim = TFile::Open(effroot, "READ");
-  TH3F *h_e0_zenmc_nfitc = (TH3F *)fsim->Get("h_e0_zenmc_nfitc_0");
-  int nbinx = h_e0_zenmc_nfitc->GetNbinsX();
+  TH3F *recmat = (TH3F *)fsim->Get("recmat0");
+  int nbinx = recmat->GetNbinsX();
   vector<double> Ecuts;
   for (int i = 1; i <= nbinx + 1; ++i) {
-    double tmp_cut = h_e0_zenmc_nfitc->GetXaxis()->GetBinLowEdge(i);
+    double tmp_cut = recmat->GetXaxis()->GetBinLowEdge(i);
     Ecuts.emplace_back(pow(10., tmp_cut));
   }
   vector<double> bin_flux = BinnedIntegratedFlux(IntegratedFlux(func), Ecuts);
@@ -85,7 +85,7 @@ TH1F *SimNfitcDist(TString trackroot, TString effroot,
     for (int j = 0; j < kZenRange; ++j) {
       for (int k = 0; k < nbinx; ++k) {
         tmp += bin_flux[k] * point_time_zen[j] *
-               h_e0_zenmc_nfitc->GetBinContent(k + 1, j + 1, i);
+               recmat->GetBinContent(k + 1, j + 1, i);
       }
     }
     simnfitcdist->SetBinContent(i, tmp);
@@ -101,7 +101,7 @@ TH1F *DataNfitcDist(TString dataroot) {
   TH1F *simnfitcdist = new TH1F("nfitc", "nfitc dist", kNPmtBin, 0, kPmtRange);
   Long64_t nentries = trec->GetEntries();
   if (trec->GetBranch("weight")) {
-    double weight;
+    float weight;
     trec->SetBranchAddress("weight", &weight);
     for (Long64_t ientry = 0; ientry < nentries; ++ientry) {
       trec->GetEntry(ientry);
