@@ -106,7 +106,7 @@ TH1F *DataNfitcDist(TString dataroot) {
   TTree *trec = (TTree *)fdata->Get("trec");
   int nfitc;
   trec->SetBranchAddress("nfitc", &nfitc);
-  TH1F *simnfitcdist = new TH1F("nfitc", "nfitc dist", kNPmtBin, 0, kPmtRange);
+  TH1F *simnfitcdist = new TH1F("hnfitc", "nfitc dist", kNPmtBin, 0, kPmtRange);
   Long64_t nentries = trec->GetEntries();
   if (trec->GetBranch("weight")) {
     float weight;
