@@ -25,7 +25,11 @@ clean:
 run: all
 	./$(EXECUTABLE)
 
+bin/fit.exe: src/fit.cpp src/*.cc
+	-$(CXX) $^ -o $@ $(CXXFLAGS)
 bin/effmat.exe: src/effmat.cpp src/*.cc
+	-$(CXX) $^ -o $@ $(CXXFLAGS)
+bin/effdirect.exe: src/effdirect.cpp src/*.cc
 	-$(CXX) $^ -o $@ $(CXXFLAGS)
 bin/addweight_window.exe: src/addweight_window.cpp src/*.cc
 	-$(CXX) $^ -o $@ $(CXXFLAGS)

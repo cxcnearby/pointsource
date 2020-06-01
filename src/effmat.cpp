@@ -14,7 +14,9 @@ vector<vector<double>> SetRatio(const vector<double> &indexarray,
 void CalcEffareaResponse(TString inputroot,
                          const vector<vector<vector<double>>> &matrix,
                          const vector<vector<double>> &fluxratio);
-double DivideNoNan(double up, double down);
+inline double DivideNoNan(double up, double down) {
+  return ((down < 1.e-8) ? 0 : up / down);
+};
 
 int main(int argc, char *argv[]) {
   if (argc < 2) {
@@ -185,8 +187,4 @@ void CalcEffareaResponse(TString inputroot,
   }
   feff->Write();
   feff->Close();
-}
-
-double DivideNoNan(double up, double down) {
-  return ((down < 1.e-8) ? 0 : up / down);
 }

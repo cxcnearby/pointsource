@@ -4,6 +4,7 @@
         "*.conf": "cpp",
         "*.bsh": "shellscript",
         "string": "cpp",
-        "compare.C": "cpp"
+        "compare.C": "cpp",
+        "iostream": "cpp"
     }
 }
